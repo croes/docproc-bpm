@@ -48,6 +48,8 @@ public class MyUnitTest {
         ProcessInstance processInstance = activitiRule.getRuntimeService()
                 .startProcessInstanceByKey("docproc", variables);
         assertNotNull(processInstance);
+        
+        logger.info("Test complete");
     }
     
     public String readFile(File file) throws IOException {
