@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn"
+	xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+	xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema"
+	expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
+	<process id="docproc" name="Document processing" isExecutable="true">
+		<startEvent id="inputfiles" activiti:initiator="userName">
+			<extensionElements>
+				<activiti:formProperty id="template" name="Template"
+					type="string" required="true"></activiti:formProperty>
+				<activiti:formProperty id="data" name="Data (CSV format)"
+					type="string"></activiti:formProperty>
+				<activiti:formProperty id="finishBefore"
+					name="Finish before (optional)" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
+				<activiti:formProperty id="startAfter"
+					name="Start after (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
+			</extensionElements>
+		</startEvent>
+		<sequenceFlow id="flow1" sourceRef="inputfiles"
+			targetRef="validation"></sequenceFlow>
+		<scriptTask id="validation" name="Validation" scriptFormat="groovy"
+			activiti:autoStoreVariables="true">
+			<documentation>Validating input:
+				-Template: ${template}
+				-Data: $(data)
+				-Finish before: $(finishBefore)
+				-Start after: ${startAfter}
+			</documentation>
+			<script>
+				out:println "Validating input...";
+				out:println "Template: " + template;
+				out:println "Data:" + data;
+				out:println "Finish before:" +  finishBefore;
+				out:println "Start after:" + startAfter;
+			</script>
+		</scriptTask>
+		<sequenceFlow id="flow2" sourceRef="validation"
+			targetRef="end"></sequenceFlow>
+		<endEvent id="end"></endEvent>
+	</process>
+	<bpmndi:BPMNDiagram id="BPMNDiagram_docproc">
+		<bpmndi:BPMNPlane bpmnElement="docproc" id="BPMNPlane_docproc">
+			<bpmndi:BPMNShape bpmnElement="inputfiles" id="BPMNShape_inputfiles">
+				<omgdc:Bounds height="35.0" width="35.0" x="50.0" y="90.0"></omgdc:Bounds>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="validation" id="BPMNShape_validation">
+				<omgdc:Bounds height="60.0" width="100.0" x="160.0" y="78.0"></omgdc:Bounds>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+				<omgdc:Bounds height="35.0" width="35.0" x="320.0" y="90.0"></omgdc:Bounds>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+				<omgdi:waypoint x="260.0" y="108.0"></omgdi:waypoint>
+				<omgdi:waypoint x="286.0" y="107.0"></omgdi:waypoint>
+				<omgdi:waypoint x="320.0" y="107.0"></omgdi:waypoint>
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+				<omgdi:waypoint x="85.0" y="107.0"></omgdi:waypoint>
+				<omgdi:waypoint x="84.0" y="107.0"></omgdi:waypoint>
+				<omgdi:waypoint x="160.0" y="108.0"></omgdi:waypoint>
+			</bpmndi:BPMNEdge>
+		</bpmndi:BPMNPlane>
+	</bpmndi:BPMNDiagram>
+</definitions>
