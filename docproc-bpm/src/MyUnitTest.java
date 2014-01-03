@@ -24,7 +24,8 @@ public class MyUnitTest {
 
     @Test
     @Deployment(resources = { "bpmn/docproc.bpmn" })
-    public void test() {
+    public void testDocproc() {
+        logger.info("Testing docproc");
         Map<String, Object> variables = new HashMap<String, Object>();
         String template = "emptytemplate";
         String data = "emptydata";
