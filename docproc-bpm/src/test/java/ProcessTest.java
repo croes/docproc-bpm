@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
-public class MyUnitTest {
+public class ProcessTest{
     
-    private static Logger logger = LoggerFactory.getLogger(MyUnitTest.class);
+    private static Logger logger = LoggerFactory.getLogger(ProcessTest.class);
 
     @Rule
     public ActivitiRule activitiRule = new ActivitiRule();
@@ -36,7 +36,6 @@ public class MyUnitTest {
             data = readFile(new File(getClass().getClassLoader()
                     .getResource("data/data.csv").getFile()));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         variables.put("userName", "Batman");
@@ -48,7 +47,6 @@ public class MyUnitTest {
         ProcessInstance processInstance = activitiRule.getRuntimeService()
                 .startProcessInstanceByKey("docproc", variables);
         assertNotNull(processInstance);
-        
         logger.info("Test complete");
     }
     

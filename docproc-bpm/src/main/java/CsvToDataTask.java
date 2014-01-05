@@ -13,7 +13,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class CsvToDataTask implements JavaDelegate {
     
-    private static Logger logger = LoggerFactory.getLogger(MyUnitTest.class);
+    private static Logger logger = LoggerFactory.getLogger(ProcessTest.class);
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
