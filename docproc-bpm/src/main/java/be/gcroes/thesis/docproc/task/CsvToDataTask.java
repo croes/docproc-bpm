@@ -1,3 +1,4 @@
+package be.gcroes.thesis.docproc.task;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class CsvToDataTask implements JavaDelegate {
     
-    private static Logger logger = LoggerFactory.getLogger(ProcessTest.class);
+    private static Logger logger = LoggerFactory.getLogger(CsvToDataTask.class);
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {

@@ -5,6 +5,7 @@
 	xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema"
 	expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
 	<process id="docproc" name="Document processing" isExecutable="true">
+		
 		<startEvent id="inputfiles" activiti:initiator="userName">
 			<extensionElements>
 				<activiti:formProperty id="template" name="Template"
@@ -17,9 +18,12 @@
 					name="Start after (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
 			</extensionElements>
 		</startEvent>
+		
 		<sequenceFlow id="flow1" sourceRef="inputfiles"
-			targetRef="validation"></sequenceFlow>
-		<scriptTask id="validation" name="Validation" scriptFormat="groovy"
+			targetRef="checkinput">
+		</sequenceFlow>
+			
+		<scriptTask id="checkinput" name="Check input" scriptFormat="groovy"
 			activiti:autoStoreVariables="true">
 			<documentation>Validating input:
 				-Template: ${template}
@@ -35,10 +39,33 @@
 				out:println "Start after:" + startAfter;
 			</script>
 		</scriptTask>
-		<sequenceFlow id="flow2" sourceRef="validation" targetRef="csv-to-task"></sequenceFlow>
-		<serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="CsvToDataTask">
+		
+		<sequenceFlow id="flow2" sourceRef="checkinput" targetRef="csv-to-task"></sequenceFlow>
+		
+		<serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="be.gcroes.thesis.docproc.task.CsvToDataTask">
 		</serviceTask>
-		<sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="end"></sequenceFlow>
+		
+		<sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="template-to-xsl"></sequenceFlow>
+		
+		<serviceTask id="template-to-xsl" name="Fill in template with data" activiti:class="be.gcroes.thesis.docproc.task.TemplateToXslTask">
+			<multiInstanceLoopCharacteristics isSequential="true">
+				<loopDataInputRef>tasks</loopDataInputRef>
+				<inputDataItem name="currentTask" />
+			</multiInstanceLoopCharacteristics>
+		</serviceTask>
+		
+		<sequenceFlow id="flow4" sourceRef="template-to-xsl" targetRef="xsl-fo-render"></sequenceFlow>
+		
+		<serviceTask id="xsl-fo-render" name="Render FO templates" activiti:class="be.gcroes.thesis.docproc.task.XslFoRenderTask">
+			<multiInstanceLoopCharacteristics isSequential="true">
+				<loopDataInputRef>templates</loopDataInputRef>
+				<inputDataItem name="currentTemplate" />
+			</multiInstanceLoopCharacteristics>
+		</serviceTask>
+		
+		<sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="end"></sequenceFlow>
+		
 		<endEvent id="end"></endEvent>
+	
 	</process>
 </definitions>
