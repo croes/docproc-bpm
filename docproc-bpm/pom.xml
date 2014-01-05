@@ -71,5 +71,10 @@
 			<artifactId>velocity</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>fop</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>

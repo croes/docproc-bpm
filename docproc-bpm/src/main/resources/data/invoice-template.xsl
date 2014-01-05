@@ -48,7 +48,7 @@
 					<fo:block-container absolute-position="absolute"
 						left="120mm" top="0mm">
 						<fo:block>
-							<fo:external-graphic src="url('logo2.png')" />
+							<fo:external-graphic src="url('data/logo2.png')" />
 						</fo:block>
 					</fo:block-container>
 				</fo:static-content>
