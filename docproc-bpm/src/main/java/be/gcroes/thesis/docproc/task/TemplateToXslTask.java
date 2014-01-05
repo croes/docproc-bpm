@@ -33,7 +33,6 @@ public class TemplateToXslTask implements JavaDelegate{
         
         Velocity.evaluate(context, sw, "logtag", template);
         
-        logger.info("Filled template: {}", sw.toString());
         sw.close();
        
         @SuppressWarnings("unchecked")

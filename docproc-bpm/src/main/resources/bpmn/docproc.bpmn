@@ -63,7 +63,12 @@
 			</multiInstanceLoopCharacteristics>
 		</serviceTask>
 		
-		<sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="end"></sequenceFlow>
+		<sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="zip"></sequenceFlow>
+		
+		<serviceTask id="zip" name="Zip all pdf files" activiti:class="be.gcroes.thesis.docproc.task.ZipTask">
+		</serviceTask>
+		
+		<sequenceFlow id="flow6" sourceRef="zip" targetRef="end"></sequenceFlow>
 		
 		<endEvent id="end"></endEvent>
 	

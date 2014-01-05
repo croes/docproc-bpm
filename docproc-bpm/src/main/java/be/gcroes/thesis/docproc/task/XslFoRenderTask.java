@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -55,10 +57,20 @@ public class XslFoRenderTask implements JavaDelegate {
             out.close();
         }
         
-        File outFile = File.createTempFile("docproc", ".pdf", new File("C:\\docprocdocs"));
+        String outputdir = (String) execution.getVariable("outputdir");
+        
+        File outFile = File.createTempFile("docproc", ".pdf", new File(outputdir));
         FileOutputStream fos = new FileOutputStream(outFile);
         fos.write(boas.toByteArray());
         fos.close();
+        
+        @SuppressWarnings("unchecked")
+        List<String> filepaths = (List<String>) execution.getVariable("filepaths");
+        if(filepaths == null){
+            filepaths = new ArrayList<String>();
+            execution.setVariable("filepaths", filepaths);
+        }
+        filepaths.add(outFile.getAbsolutePath());
     }
 
 }

@@ -43,6 +43,7 @@ public class ProcessTest{
         variables.put("data", data);
         variables.put("startAfter", null);
         variables.put("finishBefore", null);
+        variables.put("outputdir", "C:\\docprocdocs");
 
         ProcessInstance processInstance = activitiRule.getRuntimeService()
                 .startProcessInstanceByKey("docproc", variables);
