@@ -35,31 +35,10 @@
 				out:println "Start after:" + startAfter;
 			</script>
 		</scriptTask>
-		<sequenceFlow id="flow2" sourceRef="validation"
-			targetRef="end"></sequenceFlow>
+		<sequenceFlow id="flow2" sourceRef="validation" targetRef="csv-to-task"></sequenceFlow>
+		<serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="CsvToDataTask">
+		</serviceTask>
+		<sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="end"></sequenceFlow>
 		<endEvent id="end"></endEvent>
 	</process>
-	<bpmndi:BPMNDiagram id="BPMNDiagram_docproc">
-		<bpmndi:BPMNPlane bpmnElement="docproc" id="BPMNPlane_docproc">
-			<bpmndi:BPMNShape bpmnElement="inputfiles" id="BPMNShape_inputfiles">
-				<omgdc:Bounds height="35.0" width="35.0" x="50.0" y="90.0"></omgdc:Bounds>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="validation" id="BPMNShape_validation">
-				<omgdc:Bounds height="60.0" width="100.0" x="160.0" y="78.0"></omgdc:Bounds>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
-				<omgdc:Bounds height="35.0" width="35.0" x="320.0" y="90.0"></omgdc:Bounds>
-			</bpmndi:BPMNShape>
-			<bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-				<omgdi:waypoint x="260.0" y="108.0"></omgdi:waypoint>
-				<omgdi:waypoint x="286.0" y="107.0"></omgdi:waypoint>
-				<omgdi:waypoint x="320.0" y="107.0"></omgdi:waypoint>
-			</bpmndi:BPMNEdge>
-			<bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
-				<omgdi:waypoint x="85.0" y="107.0"></omgdi:waypoint>
-				<omgdi:waypoint x="84.0" y="107.0"></omgdi:waypoint>
-				<omgdi:waypoint x="160.0" y="108.0"></omgdi:waypoint>
-			</bpmndi:BPMNEdge>
-		</bpmndi:BPMNPlane>
-	</bpmndi:BPMNDiagram>
 </definitions>
