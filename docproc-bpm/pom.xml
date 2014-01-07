@@ -5,6 +5,7 @@
 	<artifactId>docproc-bpm</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Docproc BPM project</name>
+	<packaging>war</packaging>
 	<description>The project implementing the business process that drives the document processing project.</description>
 	<repositories>
 		<repository>
@@ -13,6 +14,7 @@
 		</repository>
 	</repositories>
 	<build>
+		<finalName>${artifactId}</finalName>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
@@ -29,6 +31,11 @@
 		<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-engine</artifactId>
+			<version>5.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-rest</artifactId>
 			<version>5.14</version>
 		</dependency>
 		<dependency>
@@ -76,5 +83,11 @@
 			<artifactId>fop</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+		</dependency>
+
 	</dependencies>
 </project>

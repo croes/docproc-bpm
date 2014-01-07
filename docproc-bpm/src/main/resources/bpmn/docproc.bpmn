@@ -1,76 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn"
-	xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
-	xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema"
-	expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
-	<process id="docproc" name="Document processing" isExecutable="true">
-		
-		<startEvent id="inputfiles" activiti:initiator="userName">
-			<extensionElements>
-				<activiti:formProperty id="template" name="Template"
-					type="string" required="true"></activiti:formProperty>
-				<activiti:formProperty id="data" name="Data (CSV format)"
-					type="string"></activiti:formProperty>
-				<activiti:formProperty id="finishBefore"
-					name="Finish before (optional)" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
-				<activiti:formProperty id="startAfter"
-					name="Start after (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
-			</extensionElements>
-		</startEvent>
-		
-		<sequenceFlow id="flow1" sourceRef="inputfiles"
-			targetRef="checkinput">
-		</sequenceFlow>
-			
-		<scriptTask id="checkinput" name="Check input" scriptFormat="groovy"
-			activiti:autoStoreVariables="true">
-			<documentation>Validating input:
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
+  <process id="docproc" name="Document processing" isExecutable="true">
+    <startEvent id="inputfiles" activiti:initiator="userName">
+      <extensionElements>
+        <activiti:formProperty id="template" name="Template" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="data" name="Data (CSV format)" type="string"></activiti:formProperty>
+        <activiti:formProperty id="finishBefore" name="Finish before (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
+        <activiti:formProperty id="startAfter" name="Start after (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <sequenceFlow id="flow1" sourceRef="inputfiles" targetRef="checkinput"></sequenceFlow>
+    <scriptTask id="checkinput" name="Check input" scriptFormat="groovy" activiti:autoStoreVariables="true">
+      <documentation>Validating input:
 				-Template: ${template}
 				-Data: $(data)
 				-Finish before: $(finishBefore)
-				-Start after: ${startAfter}
-			</documentation>
-			<script>
+				-Start after: ${startAfter}</documentation>
+      <script>
 				out:println "Validating input...";
 				out:println "Template: " + template;
 				out:println "Data:" + data;
 				out:println "Finish before:" +  finishBefore;
 				out:println "Start after:" + startAfter;
 			</script>
-		</scriptTask>
-		
-		<sequenceFlow id="flow2" sourceRef="checkinput" targetRef="csv-to-task"></sequenceFlow>
-		
-		<serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="be.gcroes.thesis.docproc.task.CsvToDataTask">
-		</serviceTask>
-		
-		<sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="template-to-xsl"></sequenceFlow>
-		
-		<serviceTask id="template-to-xsl" name="Fill in template with data" activiti:class="be.gcroes.thesis.docproc.task.TemplateToXslTask">
-			<multiInstanceLoopCharacteristics isSequential="true">
-				<loopDataInputRef>tasks</loopDataInputRef>
-				<inputDataItem name="currentTask" />
-			</multiInstanceLoopCharacteristics>
-		</serviceTask>
-		
-		<sequenceFlow id="flow4" sourceRef="template-to-xsl" targetRef="xsl-fo-render"></sequenceFlow>
-		
-		<serviceTask id="xsl-fo-render" name="Render FO templates" activiti:class="be.gcroes.thesis.docproc.task.XslFoRenderTask">
-			<multiInstanceLoopCharacteristics isSequential="true">
-				<loopDataInputRef>templates</loopDataInputRef>
-				<inputDataItem name="currentTemplate" />
-			</multiInstanceLoopCharacteristics>
-		</serviceTask>
-		
-		<sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="zip"></sequenceFlow>
-		
-		<serviceTask id="zip" name="Zip all pdf files" activiti:class="be.gcroes.thesis.docproc.task.ZipTask">
-		</serviceTask>
-		
-		<sequenceFlow id="flow6" sourceRef="zip" targetRef="end"></sequenceFlow>
-		
-		<endEvent id="end"></endEvent>
-	
-	</process>
+    </scriptTask>
+    <sequenceFlow id="flow2" sourceRef="checkinput" targetRef="csv-to-task"></sequenceFlow>
+    <serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="be.gcroes.thesis.docproc.task.CsvToDataTask"></serviceTask>
+    <sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="template-to-xsl"></sequenceFlow>
+    <serviceTask id="template-to-xsl" name="Fill in template with data" activiti:class="be.gcroes.thesis.docproc.task.TemplateToXslTask">
+      <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="tasks" activiti:elementVariable="currentTask"></multiInstanceLoopCharacteristics>
+    </serviceTask>
+    <sequenceFlow id="flow4" sourceRef="template-to-xsl" targetRef="xsl-fo-render"></sequenceFlow>
+    <serviceTask id="xsl-fo-render" name="Render FO templates" activiti:class="be.gcroes.thesis.docproc.task.XslFoRenderTask">
+      <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="templates" activiti:elementVariable="currentTemplate"></multiInstanceLoopCharacteristics>
+    </serviceTask>
+    <sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="zip"></sequenceFlow>
+    <serviceTask id="zip" name="Zip all pdf files" activiti:class="be.gcroes.thesis.docproc.task.ZipTask"></serviceTask>
+    <sequenceFlow id="flow6" sourceRef="zip" targetRef="end"></sequenceFlow>
+    <endEvent id="end"></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_docproc">
+    <bpmndi:BPMNPlane bpmnElement="docproc" id="BPMNPlane_docproc">
+      <bpmndi:BPMNShape bpmnElement="xsl-fo-render" id="BPMNShape_xsl-fo-render">
+        <omgdc:Bounds height="60.0" width="100.0" x="520.0" y="2.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="template-to-xsl" id="BPMNShape_template-to-xsl">
+        <omgdc:Bounds height="60.0" width="100.0" x="380.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="zip" id="BPMNShape_zip">
+        <omgdc:Bounds height="60.0" width="100.0" x="680.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkinput" id="BPMNShape_checkinput">
+        <omgdc:Bounds height="60.0" width="100.0" x="80.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="inputfiles" id="BPMNShape_inputfiles">
+        <omgdc:Bounds height="35.0" width="35.0" x="0.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="35.0" width="35.0" x="830.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="csv-to-task" id="BPMNShape_csv-to-task">
+        <omgdc:Bounds height="60.0" width="100.0" x="230.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="330.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="380.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="180.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="230.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="620.0" y="32.0"></omgdi:waypoint>
+        <omgdi:waypoint x="642.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="642.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="480.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="492.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="520.0" y="32.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="35.0" y="32.0"></omgdi:waypoint>
+        <omgdi:waypoint x="42.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="42.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="80.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="780.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="792.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="792.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="32.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
 </definitions>
