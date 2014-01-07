@@ -77,7 +77,6 @@ $(document).ready(function(){
                         ];
         var requestObj = {
                     processDefinitionId:processDefId,
-                    businessKey:"docproc",
                     variables: variables
                  };
         var settings = {
@@ -90,8 +89,9 @@ $(document).ready(function(){
             data: JSON.stringify(requestObj)
             };
         $.ajax(settings).done(function(data){
+        	console.log(data);
             $('#submitbtn').hide();
-            $('.container').append('<p>' + data + '</p>');
+            $('.container').append('<p>' + JSON.stringify(data) + '</p>');
         });
     });
 });

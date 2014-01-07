@@ -14,7 +14,7 @@
 		</repository>
 	</repositories>
 	<build>
-		<finalName>${artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>

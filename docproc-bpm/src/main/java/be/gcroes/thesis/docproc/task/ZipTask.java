@@ -12,6 +12,8 @@ import java.util.zip.ZipOutputStream;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 
+import be.gcroes.thesis.docproc.config.Config;
+
 public class ZipTask implements JavaDelegate {
 
     @Override
@@ -19,7 +21,7 @@ public class ZipTask implements JavaDelegate {
         
         @SuppressWarnings("unchecked")
         List<String> fileList = (List<String>) execution.getVariable("filepaths");
-        String outputdir = (String)execution.getVariable("outputdir");
+        String outputdir = Config.OUTPUT_DIR;
         
         SimpleDateFormat sdf = new SimpleDateFormat("'archive'-ddMMyy-hhmmss.SSS.'zip'");
         FileOutputStream fos = new FileOutputStream("" + outputdir + "\\" + sdf.format(new Date()));
