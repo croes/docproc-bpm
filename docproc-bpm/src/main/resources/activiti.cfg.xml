@@ -10,6 +10,7 @@
     <property name="jdbcPassword" value="thesis" />
     
     <property name="databaseSchemaUpdate" value="true" />
+    <property name="history" value="audit" />
     
     <property name="jobExecutorActivate" value="false" />
     
