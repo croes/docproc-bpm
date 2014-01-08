@@ -41,7 +41,7 @@
    
     <sequenceFlow id="flow6" sourceRef="zip" targetRef="sendMail"></sequenceFlow>
     
-    <serviceTask id="sendMail" activiti:class="be.gcroes.thesis.docproc.task.MailTask">
+    <serviceTask id="sendMail" name="Send e-mail notification" activiti:class="be.gcroes.thesis.docproc.task.MailTask">
     <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="tasks" activiti:elementVariable="currentTask">
     </multiInstanceLoopCharacteristics>
 	</serviceTask>
