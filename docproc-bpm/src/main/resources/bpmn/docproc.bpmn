@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
   <process id="docproc" name="Document processing" isExecutable="true">
-    <startEvent id="inputfiles" activiti:initiator="userName">
+    <startEvent id="inputfiles" activiti:initiator="kermit">
       <extensionElements>
         <activiti:formProperty id="template" name="Template" type="string" required="true"></activiti:formProperty>
         <activiti:formProperty id="data" name="Data (CSV format)" type="string"></activiti:formProperty>
@@ -25,18 +25,29 @@
 			</script>
     </scriptTask>
     <sequenceFlow id="flow2" sourceRef="checkinput" targetRef="csv-to-task"></sequenceFlow>
+    
     <serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="be.gcroes.thesis.docproc.task.CsvToDataTask"></serviceTask>
     <sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="template-to-xsl"></sequenceFlow>
     <serviceTask id="template-to-xsl" name="Fill in template with data" activiti:class="be.gcroes.thesis.docproc.task.TemplateToXslTask">
       <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="tasks" activiti:elementVariable="currentTask"></multiInstanceLoopCharacteristics>
     </serviceTask>
     <sequenceFlow id="flow4" sourceRef="template-to-xsl" targetRef="xsl-fo-render"></sequenceFlow>
+    
     <serviceTask id="xsl-fo-render" name="Render FO templates" activiti:class="be.gcroes.thesis.docproc.task.XslFoRenderTask">
       <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="templates" activiti:elementVariable="currentTemplate"></multiInstanceLoopCharacteristics>
     </serviceTask>
     <sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="zip"></sequenceFlow>
     <serviceTask id="zip" name="Zip all pdf files" activiti:class="be.gcroes.thesis.docproc.task.ZipTask"></serviceTask>
-    <sequenceFlow id="flow6" sourceRef="zip" targetRef="end"></sequenceFlow>
+   
+    <sequenceFlow id="flow6" sourceRef="zip" targetRef="sendMail"></sequenceFlow>
+    
+    <serviceTask id="sendMail" activiti:class="be.gcroes.thesis.docproc.task.MailTask">
+    <multiInstanceLoopCharacteristics isSequential="true" activiti:collection="tasks" activiti:elementVariable="currentTask">
+    </multiInstanceLoopCharacteristics>
+	</serviceTask>
+
+	<sequenceFlow sourceRef="sendMail" targetRef="end" ></sequenceFlow>
+    
     <endEvent id="end"></endEvent>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_docproc">

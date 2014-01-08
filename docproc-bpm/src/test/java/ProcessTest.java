@@ -38,12 +38,17 @@ public class ProcessTest{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        variables.put("userName", "Batman");
+        
         variables.put("template", template);
         variables.put("data", data);
+        
+        variables.put("doMail", "true");
+        variables.put("mailTo", "${email}");
+        variables.put("mailSubject", "Docproc invoice");
+        variables.put("mailBody", "Dear ${name},\n \nYour document has been processed.\n\nKind regards,\nTeam Docproc");
+        
         variables.put("startAfter", null);
         variables.put("finishBefore", null);
-
         ProcessInstance processInstance = activitiRule.getRuntimeService()
                 .startProcessInstanceByKey("docproc", variables);
         assertNotNull(processInstance);
