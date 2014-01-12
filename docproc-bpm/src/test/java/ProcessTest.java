@@ -3,8 +3,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.identity.Group;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.test.ActivitiRule;
 import org.activiti.engine.test.Deployment;
@@ -53,6 +56,31 @@ public class ProcessTest{
                 .startProcessInstanceByKey("docproc", variables);
         assertNotNull(processInstance);
         logger.info("Test complete");
+    }
+    
+    @Test
+    public void testLDAPLogin(){
+        IdentityService is = activitiRule.getIdentityService();
+        assertTrue(is.checkPassword("activiti", "Test1234"));
+        assertTrue(is.checkPassword("activiti-admin", "Test1234"));
+        assertFalse(is.checkPassword("activiti", "wrongpasword"));
+        assertFalse(is.checkPassword("activiti-admin", "wrongpasword"));
+        
+        List<Group> adminsGroups = is.createGroupQuery().groupMember("activiti-admin").list();
+        assertNotNull(adminsGroups);
+        boolean adminInAdmins = false, adminInUsers = false;
+        assertEquals(2, adminsGroups.size());
+        for(Group adminGroup : adminsGroups){
+            String id = adminGroup.getId();
+            if(id.equals(("admin"))) {adminInAdmins = true;}
+            if(id.equals(("user"))) {adminInUsers = true;}
+        }
+        assertTrue(adminInAdmins);
+        assertTrue(adminInUsers);
+        List<Group> usersGroups = is.createGroupQuery().groupMember("activiti").list();
+        assertNotNull(usersGroups);
+        assertEquals(1, usersGroups.size());
+        assertEquals("user",usersGroups.get(0).getId());
     }
     
     public String readFile(File file) throws IOException {

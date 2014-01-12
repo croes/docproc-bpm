@@ -39,6 +39,11 @@
 			<version>5.14</version>
 		</dependency>
 		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-ldap</artifactId>
+			<version>5.14</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>0.9.30</version>

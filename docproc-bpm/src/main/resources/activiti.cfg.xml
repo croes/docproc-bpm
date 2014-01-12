@@ -1,21 +1,58 @@
-<beans xmlns="http://www.springframework.org/schema/beans" 
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
-  
-    <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/activiti?autoReconnect=true" />
-    <property name="jdbcDriver" value="com.mysql.jdbc.Driver" />
-    <property name="jdbcUsername" value="root" />
-    <property name="jdbcPassword" value="thesis" />
-    
-    <property name="databaseSchemaUpdate" value="true" />
-    <property name="history" value="audit" />
-    
-    <property name="jobExecutorActivate" value="false" />
-    
-    <property name="mailServerHost" value="127.0.0.1" /> 
-    <property name="mailServerPort" value="25" />    
-  </bean>
+	<bean id="processEngineConfiguration"
+		class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost:3306/activiti?autoReconnect=true" />
+		<property name="jdbcDriver" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUsername" value="root" />
+		<property name="jdbcPassword" value="thesis" />
+
+		<property name="databaseSchemaUpdate" value="true" />
+		<property name="history" value="audit" />
+
+		<property name="jobExecutorActivate" value="false" />
+
+		<property name="mailServerHost" value="127.0.0.1" />
+		<property name="mailServerPort" value="25" />
+
+		<property name="configurators">
+			<list>
+				<bean class="org.activiti.ldap.LDAPConfigurator">
+
+					<!-- Server connection params -->
+					<property name="server" value="ldap://192.168.75.3" />
+					<property name="port" value="389" />
+					<property name="user" value="cn=activiti,cn=Users,DC=test,DC=local" />
+					<property name="password" value="Test1234" />
+
+					<!-- Query params -->
+					<property name="baseDn" value="cn=Users,DC=test,DC=local" />
+					<property name="queryUserByUserId" value="(&amp;(objectClass=user)(sAMAccountName={0}))" />
+					<property name="queryUserByFullNameLike"
+						value="(&amp;(objectClass=user)(|({0}=*{1}*)({2}=*{3}*)))" />
+					<property name="queryGroupsForUser"
+						value="(&amp;(objectClass=group)(member:1.2.840.113556.1.4.1941:={0}))" />
+
+					<!-- Attribute config -->
+					<property name="userIdAttribute" value="sAMAccountName" />
+					<property name="userFirstNameAttribute" value="givenName" />
+					<property name="userLastNameAttribute" value="sn" />
+
+					<property name="groupIdAttribute" value="cn" />
+					<property name="groupNameAttribute" value="cn" />
+
+					<property name="customConnectionParameters">
+						<map>
+							<entry key="Context.REFERRAL" value="follow" />
+						</map>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
 
 </beans>
