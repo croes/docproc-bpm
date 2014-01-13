@@ -3,8 +3,6 @@ var findProcessDefId = function(){
             accepts:"application/json",
             url:"service/repository/process-definitions",
             type:"GET",
-            username:"kermit",
-            password:"kermit",
             data:{key:"docproc"}
             };
     $.ajax(settings).done(function(data){
@@ -84,8 +82,6 @@ $(document).ready(function(){
             accepts:"application/json",
             url:"service/runtime/process-instances",
             type:"POST",
-            username:"kermit",
-            password:"kermit",
             data: JSON.stringify(requestObj)
             };
         $.ajax(settings).done(function(data){
