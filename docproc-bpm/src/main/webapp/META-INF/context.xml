@@ -1,0 +1,11 @@
+<Context debug="0" reloadable="true">
+
+	<Realm name="LDAP realm"
+		className="org.apache.catalina.realm.JNDIRealm"
+		connectionURL="ldap://192.168.75.3:389" 
+		userPattern="uid={0},cn=Users,dc=test,dc=local"
+		roleBase="cn=Users,dc=test,dc=local" 
+		roleName="cn" 
+		roleSearch="(&amp;(objectClass=group)(member:1.2.840.113556.1.4.1941:={0}))" />
+
+</Context>
