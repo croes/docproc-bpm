@@ -41,6 +41,9 @@
 			<role-name>premium</role-name>
 			<role-name>admin</role-name>
 		</auth-constraint>
+		<user-data-constraint>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    	</user-data-constraint>
 	</security-constraint>
 
 	<security-constraint>

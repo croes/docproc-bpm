@@ -21,17 +21,18 @@ public class LoginFilter implements Filter{
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        
-        HttpSession session = httpRequest.getSession();
+        HttpSession session = httpRequest.getSession(false);
         GenericPrincipal principal = (GenericPrincipal) httpRequest.getUserPrincipal();
-        String user = principal.getName();
-        String password = principal.getPassword();
-        if (user != null && session.getAttribute("user") == null) {
-            logger.info("NEW SESSION DETECTED, SAVING USER {} WITH PASS {}", user, password);
-            session.setAttribute("user", user);
-            session.setAttribute("password", password);
-            // First-time login. You can do your intercepting thing here.
-            //auth with REST API as well  
+        if(principal != null){
+            String user = principal.getName();
+            String password = principal.getPassword();
+            if (user != null && session.getAttribute("user") == null) {
+                logger.info("NEW SESSION DETECTED, SAVING USER {} WITH PASS {}", user, password);
+                session.setAttribute("user", user);
+                session.setAttribute("password", password);
+                // First-time login. You can do your intercepting thing here.
+                //auth with REST API as well  
+            }
         }
         chain.doFilter(request, response);
     }
