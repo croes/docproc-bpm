@@ -17,7 +17,7 @@
 		<init-param>
 			<!-- Application class name -->
 			<param-name>org.restlet.application</param-name>
-			<param-value>be.gcroes.thesis.docproc.servlet.CustomActivitiRestApplication</param-value>
+			<param-value>be.gcroes.thesis.docproc.rest.application.CustomActivitiRestApplication</param-value>
 		</init-param>
 	</servlet>
 

@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package be.gcroes.thesis.docproc.servlet;
+package be.gcroes.thesis.docproc.rest.application;
 
 import java.util.List;
 

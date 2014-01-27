@@ -42,3 +42,4 @@ target/
 /bin
 /velocity.log
 /generated
+/velocity.log.1
