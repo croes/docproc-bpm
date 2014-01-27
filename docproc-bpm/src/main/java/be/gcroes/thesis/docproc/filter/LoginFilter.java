@@ -30,8 +30,6 @@ public class LoginFilter implements Filter{
                 logger.info("NEW SESSION DETECTED, SAVING USER {} WITH PASS {}", user, password);
                 session.setAttribute("user", user);
                 session.setAttribute("password", password);
-                // First-time login. You can do your intercepting thing here.
-                //auth with REST API as well  
             }
         }
         chain.doFilter(request, response);
