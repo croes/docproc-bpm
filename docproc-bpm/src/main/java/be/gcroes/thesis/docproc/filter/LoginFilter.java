@@ -1,4 +1,4 @@
-package be.gcroes.thesis.docproc.filter;
+    package be.gcroes.thesis.docproc.filter;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public class LoginFilter implements Filter{
         if(principal != null){
             String user = principal.getName();
             String password = principal.getPassword();
-            if (user != null && session.getAttribute("user") == null) {
+            if ((user != null && session.getAttribute("user") == null)) {
                 logger.info("NEW SESSION DETECTED, SAVING USER {} WITH PASS {}", user, password);
                 session.setAttribute("user", user);
                 session.setAttribute("password", password);
