@@ -36,6 +36,17 @@ public class Job implements Serializable {
     @Column(name="inputdata", columnDefinition="TEXT")
     private String inputdata;
     
+    @Column(name="user", columnDefinition="VARCHAR(64)")
+    private String user;
+    
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
     public String getTemplate() {
         return template;
     }

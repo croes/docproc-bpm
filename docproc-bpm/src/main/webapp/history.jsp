@@ -1,13 +1,18 @@
+<%@page import="javax.persistence.EntityManager"%>
+<%@page import="be.gcroes.thesis.docproc.entity.EntityManagerUtil"%>
+<%@page import="javax.persistence.EntityManagerFactory"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@ page import="java.util.List, be.gcroes.thesis.docproc.entity.Job" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.css" />
+    <script src="${pageContext.request.contextPath}/js/jquery-1.10.2.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
 <title>Docproc</title>
 </head>
 <body style="padding-top: 50px;">
@@ -40,6 +45,27 @@
 		</div>
 	</div>
 	</nav>
+	
+	<h2>Jobs for <%=session.getAttribute("user") %></h2>
+	<table class="table table-striped table-bordered table-condensed">
+		<tr><td>Job id</td><td>Download link</td></tr>
+		<%
+			EntityManagerFactory emf = EntityManagerUtil.getEntityManagerFactory();
+	        EntityManager em = emf.createEntityManager();
+	        String user = (String)session.getAttribute("user");
+	        List<Job> jobs = em.createQuery("SELECT j FROM Job j WHERE j.user = \'" + user + "\'", Job.class).getResultList();
+	        for(Job job : jobs){
+	            %>
+	           <tr>
+	           	<td> <a href="${pageContext.request.contextPath}/service/history/historic-process-instances/<%=job.getActivitiJobId()%>"> <%=job.getActivitiJobId() %> </a></td>
+	           	<td> <a href="${pageContext.request.contextPath}/download?jobId=<%=job.getActivitiJobId()%>">Download zip</a></td>
+	           </tr> 
+	        <% }
+		%>
+	</table>
+		<% if(jobs.size() == 0){
+		    %> <p>No jobs found</p> 
+		<% }%>
 
 </body>
 </html>

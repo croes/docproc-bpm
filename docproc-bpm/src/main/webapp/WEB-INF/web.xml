@@ -21,12 +21,20 @@
 		</init-param>
 	</servlet>
 
+	<servlet>
+		<servlet-name>DownloadServlet</servlet-name>
+		<servlet-class>be.gcroes.thesis.docproc.servlet.DownloadServlet</servlet-class>
+	</servlet>
 	<!-- Catch all requests -->
 	<servlet-mapping>
 		<servlet-name>RestletServlet</servlet-name>
 		<url-pattern>/service/*</url-pattern>
 	</servlet-mapping>
-
+	
+	<servlet-mapping>
+		<servlet-name>DownloadServlet</servlet-name>
+		<url-pattern>/download</url-pattern>
+	</servlet-mapping>
 	<security-constraint>
 		<display-name>Security Constraint</display-name>
 		<web-resource-collection>

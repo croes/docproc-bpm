@@ -29,12 +29,14 @@ public class SaveProcessDataTask implements JavaDelegate {
         String data = (String) execution.getVariable("data");
         List<HashMap<String, String>> params = (List<HashMap<String, String>>)execution.getVariable("tasks");
         String zipLoc = (String) execution.getVariable("zipLoc");
+        String initiator = (String) execution.getVariable("initiator");
         
         Job job = new Job();
         job.setActivitiJobId(execution.getProcessInstanceId());
         job.setResult(zipLoc);
         job.setInputdata(data);
         job.setTemplate(template);
+        job.setUser(initiator);
         for(int i=0; i<params.size();i++){
             Task t = new Task(job, filepaths.get(i), params.get(i));
             job.addTask(t);

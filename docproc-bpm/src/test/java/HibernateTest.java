@@ -39,6 +39,9 @@ public class HibernateTest{
        
        Job job1 = new Job();
        job1.setActivitiJobId("TESTID");
+       job1.setUser("Testuser");
+       job1.setInputdata("test;1;2;3;4");
+       job1.setTemplate("\\testtemplate \\one \\two \\three");
        Task t1 = new Task(job1, "Finished");
        Task t2 = new Task(job1);
 
