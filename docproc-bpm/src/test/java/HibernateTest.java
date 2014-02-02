@@ -22,7 +22,7 @@ public class HibernateTest{
     @Before
     public void beforeEach()
     {
-       em = EntityManagerUtil.getTestEntityManagerFactory().createEntityManager();
+       em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
     }
 
     @After
@@ -38,6 +38,7 @@ public class HibernateTest{
        transaction.begin();
        
        Job job1 = new Job();
+       job1.setActivitiJobId("TESTID");
        Task t1 = new Task(job1, "Finished");
        Task t2 = new Task(job1);
 
@@ -57,7 +58,7 @@ public class HibernateTest{
        System.out.println("Job 1");
        System.out.println("Generated ID is: " + job1.getId());
        
-       List<Job> jobs = (List<Job>)em.createQuery("SELECT j FROM Job j").getResultList();
+       List<Job> jobs = (List<Job>)em.createQuery("SELECT j FROM Job j WHERE j.id = " + job1.getId()).getResultList();
        Job job = jobs.get(0);
        assertThat(job.getTasks()).hasSize(3);
        assertThat(job.getTasks()).contains(t1, t2, t3);

@@ -24,12 +24,42 @@ public class Job implements Serializable {
     @Column(name="id")
     private int id;
     
-    @Column(name="activiti_job_id")
+    @Column(name="activiti_instance_id", columnDefinition="VARCHAR(64)")
     private String activitiJobId;
     
-    @Column(name="result")
+    @Column(name="result", columnDefinition="TEXT")
     private String result;
     
+    @Column(name="template", columnDefinition="TEXT")
+    private String template;
+    
+    @Column(name="inputdata", columnDefinition="TEXT")
+    private String inputdata;
+    
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
+
+    public String getInputdata() {
+        return inputdata;
+    }
+
+    public void setInputdata(String inputdata) {
+        this.inputdata = inputdata;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
     @OneToMany(mappedBy="job", cascade=CascadeType.ALL)
     private List<Task> tasks = new ArrayList<Task>();
     

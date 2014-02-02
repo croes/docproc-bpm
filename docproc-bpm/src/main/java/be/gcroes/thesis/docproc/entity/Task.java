@@ -31,14 +31,14 @@ public class Task {
     @JoinColumn(name="jobid")
     private Job job;
     
-    @Column(name="task_result")
+    @Column(name="task_result", columnDefinition="TEXT")
     private String result;
     
     @ElementCollection(fetch=FetchType.EAGER)
-    @MapKeyColumn(name="key", insertable=false, updatable=false)
+    @MapKeyColumn(name="param_key", columnDefinition="TEXT", insertable=false, updatable=false)
     @CollectionTable(name="task_param",
                     joinColumns=@JoinColumn(name="taskid"))
-    @Column(name="value")
+    @Column(name="param_value", columnDefinition="TEXT")
     private Map<String, String> params = new HashMap<String, String>();
     
     public Task(){}

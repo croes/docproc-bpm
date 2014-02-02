@@ -24,7 +24,8 @@ public class ZipTask implements JavaDelegate {
         String outputdir = Config.OUTPUT_DIR;
         
         SimpleDateFormat sdf = new SimpleDateFormat("'archive'-ddMMyy-hhmmss.SSS.'zip'");
-        FileOutputStream fos = new FileOutputStream("" + outputdir + "\\" + sdf.format(new Date()));
+        String zipFilepath = "" + outputdir + "\\" + sdf.format(new Date());
+        FileOutputStream fos = new FileOutputStream(zipFilepath);
         ZipOutputStream zos = new ZipOutputStream(fos);
         
         byte[] buffer = new byte[1024];
@@ -41,6 +42,8 @@ public class ZipTask implements JavaDelegate {
         }
         zos.closeEntry();
         zos.close();
+        
+        execution.setVariable("zipLoc", zipFilepath);
     }
 
 }

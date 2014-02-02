@@ -24,12 +24,17 @@ public class SaveProcessDataTask implements JavaDelegate {
         EntityTransaction tx = em.getTransaction();
         
         tx.begin();
-        List<String> templates = (List<String>) execution.getVariable("templates");
+        String template = (String) execution.getVariable("template");
         List<String> filepaths = (List<String>) execution.getVariable("filepaths");
         String data = (String) execution.getVariable("data");
         List<HashMap<String, String>> params = (List<HashMap<String, String>>)execution.getVariable("tasks");
+        String zipLoc = (String) execution.getVariable("zipLoc");
         
         Job job = new Job();
+        job.setActivitiJobId(execution.getProcessInstanceId());
+        job.setResult(zipLoc);
+        job.setInputdata(data);
+        job.setTemplate(template);
         for(int i=0; i<params.size();i++){
             Task t = new Task(job, filepaths.get(i), params.get(i));
             job.addTask(t);
@@ -39,5 +44,4 @@ public class SaveProcessDataTask implements JavaDelegate {
         
         tx.commit();
     }
-
 }

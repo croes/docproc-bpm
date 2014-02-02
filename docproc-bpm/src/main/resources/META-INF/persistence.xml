@@ -8,12 +8,13 @@
 		<class>be.gcroes.thesis.entity.Task</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.username" value="root" />
+			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="javax.persistence.jdbc.password" value="thesis" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/docproc" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/docproc" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
 		</properties>
 	</persistence-unit>
 	

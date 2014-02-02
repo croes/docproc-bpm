@@ -46,7 +46,12 @@
     </multiInstanceLoopCharacteristics>
 	</serviceTask>
 
-	<sequenceFlow sourceRef="sendMail" targetRef="end" ></sequenceFlow>
+	<sequenceFlow sourceRef="sendMail" targetRef="saveProcessData" ></sequenceFlow>
+	
+	<serviceTask id="saveProcessData" name="Save process data to DB" activiti:class="be.gcroes.thesis.docproc.task.SaveProcessDataTask">
+	</serviceTask>
+	
+	<sequenceFlow id="flow7" sourceRef="saveProcessData" targetRef="end"></sequenceFlow> 
     
     <endEvent id="end"></endEvent>
   </process>
