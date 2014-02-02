@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
@@ -20,7 +21,9 @@ public class SaveProcessDataTask implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         EntityManagerFactory emf = EntityManagerUtil.getEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
         
+        tx.begin();
         List<String> templates = (List<String>) execution.getVariable("templates");
         List<String> filepaths = (List<String>) execution.getVariable("filepaths");
         String data = (String) execution.getVariable("data");
@@ -34,6 +37,7 @@ public class SaveProcessDataTask implements JavaDelegate {
         
         em.persist(job);
         
+        tx.commit();
     }
 
 }

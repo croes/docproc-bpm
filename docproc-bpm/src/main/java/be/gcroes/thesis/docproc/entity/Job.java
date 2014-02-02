@@ -27,6 +27,9 @@ public class Job implements Serializable {
     @Column(name="activiti_job_id")
     private String activitiJobId;
     
+    @Column(name="result")
+    private String result;
+    
     @OneToMany(mappedBy="job", cascade=CascadeType.ALL)
     private List<Task> tasks = new ArrayList<Task>();
     
