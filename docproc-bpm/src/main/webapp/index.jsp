@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="css/bootstrap.css" />
 <script src="js/jquery-1.10.2.js"></script>
 <script src="js/bootstrap.js"></script>
-<script src="js/jquery.csv-0.71.js"></script>
 </head>
 <body style="padding-top: 50px;">
 	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse"
