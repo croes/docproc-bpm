@@ -49,7 +49,7 @@ public class DownloadServlet extends HttpServlet {
             if (jobId != null && taskId != null) {
                 Task task = em
                         .createQuery("SELECT t FROM Task t, Job j WHERE" +
-                                  "t.id = " + taskId
+                                  " t.id = " + taskId
                                 + " AND j.activitiJobId = " + jobId
                                 + " AND j.user = \'" + user + "\'"
                                 + " AND t.job = j", Task.class).getSingleResult();

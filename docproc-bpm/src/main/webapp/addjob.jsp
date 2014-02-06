@@ -4,11 +4,11 @@
     <meta charset="ISO-8859-1" />
     <title>Docproc document processing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <script src="js/jquery-1.10.2.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script src="js/jquery.csv-0.71.js"></script>
-    <script src="js/docproc.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.css" />
+    <script src="${pageContext.request.contextPath}/js/jquery-1.10.2.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery.csv-0.71.js"></script>
+    <script src="${pageContext.request.contextPath}/js/docproc.js"></script>
   </head>
   <body style="padding-top: 50px;">
   
@@ -23,16 +23,16 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="index.jsp">Docproc</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/index.jsp">Docproc</a>
 		</div>
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="addjob.jsp">Add job</a></li>
-				<li><a href="history.jsp">History</a></li>
+				<li><a href="${pageContext.request.contextPath}/history.jsp">History</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="logout.jsp">Logout</a></li>
+				<li><a href="${pageContext.request.contextPath}/logout.jsp">Logout</a></li>
 			</ul>
 			<p class="navbar-text navbar-right">
 				<span class="glyphicon glyphicon-user"></span><%=session.getAttribute("user")%>
