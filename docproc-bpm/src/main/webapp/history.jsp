@@ -33,16 +33,16 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="${pageContext.request.contextPath}index.jsp">Docproc</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/index.jsp">Docproc</a>
 		</div>
 		<div class="collapse navbar-collapse"
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="${pageContext.request.contextPath}addjob.jsp">Add job</a></li>
-				<li class="active"><a href="${pageContext.request.contextPath}history.jsp">History</a></li>
+				<li><a href="${pageContext.request.contextPath}/addjob.jsp">Add job</a></li>
+				<li class="active"><a href="${pageContext.request.contextPath}/history.jsp">History</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="${pageContext.request.contextPath}logout.jsp">Logout</a></li>
+				<li><a href="${pageContext.request.contextPath}/logout.jsp">Logout</a></li>
 			</ul>
 			<p class="navbar-text navbar-right">
 				<span class="glyphicon glyphicon-user"></span><%=session.getAttribute("user")%>
