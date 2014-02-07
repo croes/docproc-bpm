@@ -71,7 +71,23 @@ $(document).ready(function(){
                             {
                                 name: "finishBefore",
                                 value: $('#startBefore').val()
-                            } 
+                            },
+                            {
+                                name: "doMail",
+                                value: true
+                            },
+                            {
+                                name: "mailTo",
+                                value: "${email}"
+                            },
+                            {
+                                name: "mailSubject",
+                                value: "Docproc invoice"
+                            },
+                            {
+                                name: "mailBody",
+                                value: "Dear ${name},\n \nYour document has been processed.\n\nKind regards,\nTeam Docproc"
+                            }
                         ];
         var requestObj = {
                     processDefinitionId:processDefId,
