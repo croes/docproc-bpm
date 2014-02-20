@@ -9,18 +9,6 @@
         <activiti:formProperty id="startAfter" name="Start after (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
       </extensionElements>
     </startEvent>
-    <sequenceFlow id="flow1" sourceRef="inputfiles" targetRef="checkinput"></sequenceFlow>
-    <scriptTask id="checkinput" name="Check input" scriptFormat="groovy" activiti:autoStoreVariables="true">
-      <documentation>Validating input:
-				-Template: ${template}
-				-Data: $(data)
-				-Finish before: $(finishBefore)
-				-Start after: ${startAfter}</documentation>
-      <script>
-				out:println "Validating input...";
-			</script>
-    </scriptTask>
-    <sequenceFlow id="flow2" sourceRef="checkinput" targetRef="csv-to-task"></sequenceFlow>
     <serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="be.gcroes.thesis.docproc.task.CsvToDataTask"></serviceTask>
     <sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="receivetask1"></sequenceFlow>
     <serviceTask id="saveProcessData" name="Save process data to DB" activiti:class="be.gcroes.thesis.docproc.task.SaveProcessDataTask"></serviceTask>
@@ -52,13 +40,8 @@
     <receiveTask id="receivetask4" name="Receive Task"></receiveTask>
     <sequenceFlow id="flow14" sourceRef="receivetask4" targetRef="saveProcessData"></sequenceFlow>
     <receiveTask id="receivetask6" name="Receive Task"></receiveTask>
-    <sequenceFlow id="flow15" sourceRef="receivetask6" targetRef="scripttask1"></sequenceFlow>
-    <scriptTask id="scripttask1" name="Print end" scriptFormat="groovy" activiti:autoStoreVariables="true">
-      <script>
-				out:println "Workflow ended";
-			</script>
-    </scriptTask>
-    <sequenceFlow id="flow16" sourceRef="scripttask1" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="flow15" sourceRef="receivetask6" targetRef="end"></sequenceFlow>
+    <sequenceFlow id="flow16" sourceRef="inputfiles" targetRef="csv-to-task"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_docproc">
     <bpmndi:BPMNPlane bpmnElement="docproc" id="BPMNPlane_docproc">
@@ -71,11 +54,8 @@
       <bpmndi:BPMNShape bpmnElement="zip" id="BPMNShape_zip">
         <omgdc:Bounds height="60.0" width="100.0" x="686.0" y="15.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="checkinput" id="BPMNShape_checkinput">
-        <omgdc:Bounds height="60.0" width="100.0" x="80.0" y="0.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="inputfiles" id="BPMNShape_inputfiles">
-        <omgdc:Bounds height="35.0" width="35.0" x="0.0" y="15.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="100.0" y="12.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="saveProcessData" id="BPMNShape_saveProcessData">
         <omgdc:Bounds height="60.0" width="100.0" x="980.0" y="15.0"></omgdc:Bounds>
@@ -116,20 +96,11 @@
       <bpmndi:BPMNShape bpmnElement="receivetask6" id="BPMNShape_receivetask6">
         <omgdc:Bounds height="55.0" width="105.0" x="1110.0" y="17.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
-        <omgdc:Bounds height="55.0" width="105.0" x="1110.0" y="130.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
         <omgdi:waypoint x="330.0" y="30.0"></omgdi:waypoint>
         <omgdi:waypoint x="342.0" y="30.0"></omgdi:waypoint>
         <omgdi:waypoint x="342.0" y="30.0"></omgdi:waypoint>
         <omgdi:waypoint x="381.0" y="30.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-        <omgdi:waypoint x="180.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="192.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="192.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="230.0" y="30.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
         <omgdi:waypoint x="770.0" y="376.0"></omgdi:waypoint>
@@ -143,12 +114,6 @@
       <bpmndi:BPMNEdge bpmnElement="sequenceFlow-06b3de25-7e4a-4923-ad7b-94052f6a7190" id="BPMNEdge_sequenceFlow-06b3de25-7e4a-4923-ad7b-94052f6a7190">
         <omgdi:waypoint x="1040.0" y="376.0"></omgdi:waypoint>
         <omgdi:waypoint x="1060.0" y="375.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
-        <omgdi:waypoint x="35.0" y="32.0"></omgdi:waypoint>
-        <omgdi:waypoint x="42.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="42.0" y="30.0"></omgdi:waypoint>
-        <omgdi:waypoint x="80.0" y="30.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
         <omgdi:waypoint x="1080.0" y="45.0"></omgdi:waypoint>
@@ -188,13 +153,12 @@
         <omgdi:waypoint x="980.0" y="45.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
-        <omgdi:waypoint x="1162.0" y="72.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1162.0" y="130.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1215.0" y="44.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1250.0" y="44.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
-        <omgdi:waypoint x="1215.0" y="157.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1267.0" y="157.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1267.0" y="62.0"></omgdi:waypoint>
+        <omgdi:waypoint x="135.0" y="29.0"></omgdi:waypoint>
+        <omgdi:waypoint x="230.0" y="30.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

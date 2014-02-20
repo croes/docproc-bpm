@@ -21,9 +21,11 @@ import com.rabbitmq.client.ShutdownSignalException;
 public abstract class QueueConsumer extends EndPoint implements Runnable, Consumer{
     
     public static final String INC_QUEUE_NAME = "docproc-inc";
+    private Producer responder;
     
     public QueueConsumer(String endPointName) throws IOException{
-        super(endPointName);        
+        super(endPointName);      
+        responder = new Producer(INC_QUEUE_NAME);
     }
     
     public void run() {
@@ -56,16 +58,20 @@ public abstract class QueueConsumer extends EndPoint implements Runnable, Consum
     
     protected void returnResultMap(ResultMap results){
         try {
-            Producer p = new Producer(INC_QUEUE_NAME);
-            p.sendMessage(results);
-            p.close();
+            responder.sendMessage(results);
         } catch (IOException e) {
-            
+            e.printStackTrace();
         }
     }
 
     public void handleCancel(String consumerTag) {}
     public void handleCancelOk(String consumerTag) {}
     public void handleRecoverOk(String consumerTag) {}
-    public void handleShutdownSignal(String consumerTag, ShutdownSignalException arg1) {}
+    public void handleShutdownSignal(String consumerTag, ShutdownSignalException arg1) {
+        try {
+            responder.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -21,7 +21,7 @@ public abstract class EndPoint {
     
     public EndPoint(String endpointName) throws IOException{
          Properties props = new Properties();
-         InputStream stream = ClassLoader.getSystemResourceAsStream("worker.properties");
+         InputStream stream = getClass().getClassLoader().getResourceAsStream("worker.properties");
          if(stream == null){
              throw new IOException("could not load worker.properties");
          }
