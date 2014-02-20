@@ -1,0 +1,1 @@
+start cmd /k java -jar ..\..\..\workers\mailWorker\target\mailWorker.jar

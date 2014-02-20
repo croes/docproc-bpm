@@ -1,0 +1,1 @@
+start cmd /k java -jar ..\..\..\workers\renderWorker\target\renderWorker.jar

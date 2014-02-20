@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/bpmn20">
+  <process id="docproc" name="Document processing" isExecutable="true">
+    <startEvent id="inputfiles" activiti:initiator="initiator">
+      <extensionElements>
+        <activiti:formProperty id="template" name="Template" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="data" name="Data (CSV format)" type="string"></activiti:formProperty>
+        <activiti:formProperty id="finishBefore" name="Finish before (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
+        <activiti:formProperty id="startAfter" name="Start after (optional)" type="date" datePattern="dd-MM-yyyy hh:mm"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <sequenceFlow id="flow1" sourceRef="inputfiles" targetRef="checkinput"></sequenceFlow>
+    <scriptTask id="checkinput" name="Check input" scriptFormat="groovy" activiti:autoStoreVariables="true">
+      <documentation>Validating input:
+				-Template: ${template}
+				-Data: $(data)
+				-Finish before: $(finishBefore)
+				-Start after: ${startAfter}</documentation>
+      <script>
+				out:println "Validating input...";
+			</script>
+    </scriptTask>
+    <sequenceFlow id="flow2" sourceRef="checkinput" targetRef="csv-to-task"></sequenceFlow>
+    <serviceTask id="csv-to-task" name="Parse CSV data" activiti:class="be.gcroes.thesis.docproc.task.CsvToDataTask"></serviceTask>
+    <sequenceFlow id="flow3" sourceRef="csv-to-task" targetRef="receivetask1"></sequenceFlow>
+    <serviceTask id="saveProcessData" name="Save process data to DB" activiti:class="be.gcroes.thesis.docproc.task.SaveProcessDataTask"></serviceTask>
+    <sequenceFlow id="flow7" sourceRef="saveProcessData" targetRef="receivetask6"></sequenceFlow>
+    <endEvent id="end"></endEvent>
+    <subProcess id="subprocess1" name="Sub Process">
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="tasks" activiti:elementVariable="currentTask"></multiInstanceLoopCharacteristics>
+      <startEvent id="startevent1" name="Start"></startEvent>
+      <sequenceFlow id="flow11" sourceRef="startevent1" targetRef="template-to-xsl"></sequenceFlow>
+      <serviceTask id="template-to-xsl" name="Fill in template with data" activiti:class="be.gcroes.thesis.docproc.task.TemplateToXslTask"></serviceTask>
+      <sequenceFlow id="flow4" sourceRef="template-to-xsl" targetRef="receivetask2"></sequenceFlow>
+      <receiveTask id="receivetask2" name="Receive Task"></receiveTask>
+      <sequenceFlow id="flow9" sourceRef="receivetask2" targetRef="xsl-fo-render"></sequenceFlow>
+      <serviceTask id="xsl-fo-render" name="Render FO templates" activiti:class="be.gcroes.thesis.docproc.task.XslFoRenderTask"></serviceTask>
+      <sequenceFlow id="flow5" sourceRef="xsl-fo-render" targetRef="receivetask3"></sequenceFlow>
+      <receiveTask id="receivetask3" name="Receive Task"></receiveTask>
+      <sequenceFlow id="flow12" sourceRef="receivetask3" targetRef="sendMail"></sequenceFlow>
+      <serviceTask id="sendMail" name="Send e-mail notification" activiti:class="be.gcroes.thesis.docproc.task.MailTask"></serviceTask>
+      <sequenceFlow id="sequenceFlow-06b3de25-7e4a-4923-ad7b-94052f6a7190" sourceRef="sendMail" targetRef="receivetask5"></sequenceFlow>
+      <endEvent id="endevent1" name="End"></endEvent>
+      <receiveTask id="receivetask5" name="Receive Task"></receiveTask>
+      <sequenceFlow id="flow13" sourceRef="receivetask5" targetRef="endevent1"></sequenceFlow>
+    </subProcess>
+    <receiveTask id="receivetask1" name="Receive Task"></receiveTask>
+    <sequenceFlow id="flow8" sourceRef="receivetask1" targetRef="subprocess1"></sequenceFlow>
+    <serviceTask id="zip" name="Zip all pdf files" activiti:class="be.gcroes.thesis.docproc.task.ZipTask"></serviceTask>
+    <sequenceFlow id="flow6" sourceRef="zip" targetRef="receivetask4"></sequenceFlow>
+    <sequenceFlow id="flow10" sourceRef="subprocess1" targetRef="zip"></sequenceFlow>
+    <receiveTask id="receivetask4" name="Receive Task"></receiveTask>
+    <sequenceFlow id="flow14" sourceRef="receivetask4" targetRef="saveProcessData"></sequenceFlow>
+    <receiveTask id="receivetask6" name="Receive Task"></receiveTask>
+    <sequenceFlow id="flow15" sourceRef="receivetask6" targetRef="scripttask1"></sequenceFlow>
+    <scriptTask id="scripttask1" name="Print end" scriptFormat="groovy" activiti:autoStoreVariables="true">
+      <script>
+				out:println "Workflow ended";
+			</script>
+    </scriptTask>
+    <sequenceFlow id="flow16" sourceRef="scripttask1" targetRef="end"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_docproc">
+    <bpmndi:BPMNPlane bpmnElement="docproc" id="BPMNPlane_docproc">
+      <bpmndi:BPMNShape bpmnElement="xsl-fo-render" id="BPMNShape_xsl-fo-render">
+        <omgdc:Bounds height="60.0" width="100.0" x="670.0" y="346.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="template-to-xsl" id="BPMNShape_template-to-xsl">
+        <omgdc:Bounds height="60.0" width="100.0" x="400.0" y="346.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="zip" id="BPMNShape_zip">
+        <omgdc:Bounds height="60.0" width="100.0" x="686.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkinput" id="BPMNShape_checkinput">
+        <omgdc:Bounds height="60.0" width="100.0" x="80.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="inputfiles" id="BPMNShape_inputfiles">
+        <omgdc:Bounds height="35.0" width="35.0" x="0.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="saveProcessData" id="BPMNShape_saveProcessData">
+        <omgdc:Bounds height="60.0" width="100.0" x="980.0" y="15.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="35.0" width="35.0" x="1250.0" y="27.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="csv-to-task" id="BPMNShape_csv-to-task">
+        <omgdc:Bounds height="60.0" width="100.0" x="230.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendMail" id="BPMNShape_sendMail">
+        <omgdc:Bounds height="60.0" width="100.0" x="940.0" y="346.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receivetask1" id="BPMNShape_receivetask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="381.0" y="3.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receivetask2" id="BPMNShape_receivetask2">
+        <omgdc:Bounds height="55.0" width="105.0" x="540.0" y="348.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receivetask3" id="BPMNShape_receivetask3">
+        <omgdc:Bounds height="55.0" width="105.0" x="800.0" y="348.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subprocess1" id="BPMNShape_subprocess1" isExpanded="false">
+        <omgdc:Bounds height="201.0" width="991.0" x="240.0" y="273.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="290.0" y="358.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="1196.0" y="358.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receivetask5" id="BPMNShape_receivetask5">
+        <omgdc:Bounds height="55.0" width="105.0" x="1060.0" y="348.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receivetask4" id="BPMNShape_receivetask4">
+        <omgdc:Bounds height="55.0" width="105.0" x="828.0" y="17.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="receivetask6" id="BPMNShape_receivetask6">
+        <omgdc:Bounds height="55.0" width="105.0" x="1110.0" y="17.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="1110.0" y="130.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="330.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="342.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="381.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="180.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="192.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="230.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="770.0" y="376.0"></omgdi:waypoint>
+        <omgdi:waypoint x="804.0" y="376.0"></omgdi:waypoint>
+        <omgdi:waypoint x="905.0" y="375.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="500.0" y="376.0"></omgdi:waypoint>
+        <omgdi:waypoint x="540.0" y="375.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sequenceFlow-06b3de25-7e4a-4923-ad7b-94052f6a7190" id="BPMNEdge_sequenceFlow-06b3de25-7e4a-4923-ad7b-94052f6a7190">
+        <omgdi:waypoint x="1040.0" y="376.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1060.0" y="375.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="35.0" y="32.0"></omgdi:waypoint>
+        <omgdi:waypoint x="42.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="42.0" y="30.0"></omgdi:waypoint>
+        <omgdi:waypoint x="80.0" y="30.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="1080.0" y="45.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1080.0" y="45.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1110.0" y="44.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="786.0" y="45.0"></omgdi:waypoint>
+        <omgdi:waypoint x="828.0" y="44.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="433.0" y="58.0"></omgdi:waypoint>
+        <omgdi:waypoint x="735.0" y="273.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="645.0" y="375.0"></omgdi:waypoint>
+        <omgdi:waypoint x="670.0" y="376.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="735.0" y="273.0"></omgdi:waypoint>
+        <omgdi:waypoint x="736.0" y="75.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="325.0" y="375.0"></omgdi:waypoint>
+        <omgdi:waypoint x="400.0" y="376.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="905.0" y="375.0"></omgdi:waypoint>
+        <omgdi:waypoint x="940.0" y="376.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="1165.0" y="375.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1196.0" y="375.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="933.0" y="44.0"></omgdi:waypoint>
+        <omgdi:waypoint x="980.0" y="45.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="1162.0" y="72.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1162.0" y="130.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="1215.0" y="157.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1267.0" y="157.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1267.0" y="62.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
