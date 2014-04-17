@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -14,13 +16,30 @@ import org.apache.commons.lang.SerializationUtils;
  *
  */
 public class Producer extends EndPoint{
+	
+	private static Logger logger = LoggerFactory
+            .getLogger(Producer.class);
     
     public Producer(String endPointName) throws IOException{
         super(endPointName);
     }
 
     public void sendMessage(Serializable object) throws IOException {
-        channel.basicPublish("",endPointName, null, SerializationUtils.serialize(object));
+    	try {
+			channel.basicPublish("", endPointName, null, SerializationUtils.serialize(object));
+		} catch (IOException e) {
+			logger.error("Could not send message on queue {}", endPointName); 
+			e.printStackTrace();
+		}
+    }
+    
+    public void sendMessage(String message){
+    	try {
+			channel.basicPublish("", endPointName, null, message.getBytes());
+		} catch (IOException e) {
+			logger.error("Could not send message on queue {}", endPointName); 
+			e.printStackTrace();
+		}
     }
     
     public static void main(String[] args) throws IOException {
