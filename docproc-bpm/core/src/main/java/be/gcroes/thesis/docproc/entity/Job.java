@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.joda.time.DateTime;
+
 @Entity
 @Table(name = "Jobs")
 public class Job implements Serializable {
@@ -24,12 +26,6 @@ public class Job implements Serializable {
     @Column(name="id")
     private int id;
     
-    @Column(name="activiti_instance_id", columnDefinition="VARCHAR(64)")
-    private String activitiJobId;
-    
-    @Column(name="result", columnDefinition="TEXT")
-    private String result;
-    
     @Column(name="template", columnDefinition="TEXT")
     private String template;
     
@@ -39,58 +35,71 @@ public class Job implements Serializable {
     @Column(name="user", columnDefinition="VARCHAR(64)")
     private String user;
     
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public String getInputdata() {
-        return inputdata;
-    }
-
-    public void setInputdata(String inputdata) {
-        this.inputdata = inputdata;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
     @OneToMany(mappedBy="job", cascade=CascadeType.ALL)
-    private List<Task> tasks = new ArrayList<Task>();
-    
-    public Job(){
-       
-    }
-    
-    public Job(String activitiJobId){
-        this.activitiJobId = activitiJobId;
-    }
+	private List<Task> tasks = new ArrayList<Task>();
 
-    public String getActivitiJobId() {
-        return activitiJobId;
-    }
+	@Column(name="result", columnDefinition="TEXT")
+	private String result;
 
-    public void setActivitiJobId(String activitiJobId) {
-        this.activitiJobId = activitiJobId;
-    }
+	@Column(name="starttime", columnDefinition="TIMESTAMP")
+	private DateTime startTime;
 
-    public List<Task> getTasks() {
+	@Column(name="endtime", columnDefinition="TIMESTAMP")
+	private DateTime endTime;
+
+	public Job(){
+	
+	}
+
+	public int getId() {
+	    return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getTemplate() {
+	    return template;
+	}
+
+	public void setTemplate(String template) {
+	    this.template = template;
+	}
+
+	public String getInputdata() {
+	    return inputdata;
+	}
+
+	public void setInputdata(String inputdata) {
+	    this.inputdata = inputdata;
+	}
+
+	public String getUser() {
+	    return user;
+	}
+
+	public void setUser(String user) {
+	    this.user = user;
+	}
+
+	public DateTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(DateTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public DateTime getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(DateTime endTime) {
+		this.endTime = endTime;
+	}
+
+	public List<Task> getTasks() {
         return tasks;
     }
 
@@ -113,8 +122,12 @@ public class Job implements Serializable {
         tasks.addAll(tasks);
     }
 
-    public int getId() {
-        return id;
-    }
+	public String getResult() {
+	    return result;
+	}
+
+	public void setResult(String result) {
+	    this.result = result;
+	}
     
 }
