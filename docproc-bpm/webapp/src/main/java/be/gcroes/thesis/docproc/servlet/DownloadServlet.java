@@ -30,7 +30,6 @@ public class DownloadServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        String reason = "";
         String jobId = request.getParameter("jobId");
         String taskId = request.getParameter("taskId");
         if (session != null) {
@@ -57,7 +56,7 @@ public class DownloadServlet extends HttpServlet {
                 sendFile(request, response, filepath);
             }
         } else {
-            reason = "Please login first.";
+            response.getWriter().write("Access denied. Please login before downloading a file.");
         }
 
     }

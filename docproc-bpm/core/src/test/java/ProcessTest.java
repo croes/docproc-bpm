@@ -1,3 +1,8 @@
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,13 +18,9 @@ import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.test.ActivitiRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.*;
 
 public class ProcessTest {
 
