@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee  
                  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<display-name>Activiti REST</display-name>
+	<display-name>Docproc web</display-name>
 
 	<listener>
 		<listener-class>org.activiti.rest.common.servlet.ActivitiServletContextListener</listener-class>
