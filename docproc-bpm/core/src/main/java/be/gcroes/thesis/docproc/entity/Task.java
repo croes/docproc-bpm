@@ -42,7 +42,7 @@ public class Task implements Serializable{
     
     @ElementCollection(fetch=FetchType.EAGER)
     @MapKeyColumn(name="param_key",
-    			  columnDefinition="TEXT",
+    			  columnDefinition="VARCHAR(255)",
     			  insertable=false,
     			  updatable=false)
     @CollectionTable(name="task_param",

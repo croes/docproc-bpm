@@ -1,9 +1,9 @@
-package be.gcroes.thesis.docproc.task;
+package be.gcroes.thesis.docproc.messaging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import be.gcroes.thesis.docproc.messaging.Producer;
+import be.gcroes.thesis.docproc.entity.Task;
 
 public abstract class QueueMessage{
     
@@ -18,6 +18,12 @@ public abstract class QueueMessage{
         this.queueName = queueName;
         this.jobId = jobId;
         this.taskId = taskId;
+    }
+    
+    public QueueMessage(String queueName, Task task){
+    	this.queueName = queueName;
+    	this.jobId = task.getJob().getId();
+    	this.taskId = task.getId();
     }
 
     public void send() throws Exception {

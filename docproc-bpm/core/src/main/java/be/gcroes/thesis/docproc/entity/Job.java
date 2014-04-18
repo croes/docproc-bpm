@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 @Entity
@@ -41,10 +42,12 @@ public class Job implements Serializable {
 	@Column(name="result", columnDefinition="TEXT")
 	private String result;
 
-	@Column(name="starttime", columnDefinition="TIMESTAMP")
+	@Column(name="starttime")
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime startTime;
 
-	@Column(name="endtime", columnDefinition="TIMESTAMP")
+	@Column(name="endtime")
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime endTime;
 
 	public Job(){

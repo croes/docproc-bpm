@@ -1,4 +1,4 @@
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -38,16 +38,13 @@ public class HibernateTest{
        transaction.begin();
        
        Job job1 = new Job();
-       job1.setActivitiJobId("TESTID");
        job1.setUser("Testuser");
        job1.setInputdata("test;1;2;3;4");
        job1.setTemplate("\\testtemplate \\one \\two \\three");
-       Task t1 = new Task(job1, "Finished");
        Task t2 = new Task(job1);
 
        // IDs start as null
        assertEquals(0, job1.getId());
-       assertEquals(0, t1.getId());
        assertEquals(0, t2.getId());
 
        em.persist(job1);
@@ -61,15 +58,16 @@ public class HibernateTest{
        System.out.println("Job 1");
        System.out.println("Generated ID is: " + job1.getId());
        
+       @SuppressWarnings("unchecked")
        List<Job> jobs = (List<Job>)em.createQuery("SELECT j FROM Job j WHERE j.id = " + job1.getId()).getResultList();
        Job job = jobs.get(0);
-       assertThat(job.getTasks()).hasSize(3);
-       assertThat(job.getTasks()).contains(t1, t2, t3);
-       assertThat(job.getTasks().get(2)).isSameAs(t3);
-       assertThat(job.getTasks().get(2).getParamKeys()).contains("arg0", "arg1");
-       assertThat(job.getTasks().get(2).getParamValues()).contains("test", "testing");
-       assertThat(job.getTasks().get(2).getParams().get("arg0")).isNotNull();
-       assertThat(job.getTasks().get(2).getParams().get("arg0")).isEqualTo("test");
+       assertThat(job.getTasks()).hasSize(2);
+       assertThat(job.getTasks()).contains(t2, t3);
+       assertThat(job.getTasks().get(1)).isSameAs(t3);
+       assertThat(job.getTasks().get(1).getParamKeys()).contains("arg0", "arg1");
+       assertThat(job.getTasks().get(1).getParamValues()).contains("test", "testing");
+       assertThat(job.getTasks().get(1).getParams().get("arg0")).isNotNull();
+       assertThat(job.getTasks().get(1).getParams().get("arg0")).isEqualTo("test");
        
     }
  }
