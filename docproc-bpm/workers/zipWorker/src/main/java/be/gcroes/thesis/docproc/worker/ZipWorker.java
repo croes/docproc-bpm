@@ -1,70 +1,54 @@
 package be.gcroes.thesis.docproc.worker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import be.gcroes.thesis.docproc.config.Config;
+import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
 import be.gcroes.thesis.docproc.messaging.QueueWorker;
-import be.gcroes.thesis.docproc.messaging.ResultMap;
-import be.gcroes.thesis.docproc.task.ZipTask;
 
 public class ZipWorker extends QueueWorker {
     
-    private static Logger logger = LoggerFactory.getLogger(ZipTask.class);
+    private static Logger logger = LoggerFactory.getLogger(ZipWorker.class);
+    
+    public static final String QUEUE_NAME = "zip";
 
     public ZipWorker() throws IOException {
-        super(ZipTask.QUEUE_NAME);
+        super(QUEUE_NAME);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected void doWork(Map<String, Object> map) {
-        List<String> fileList = new ArrayList<String>();
-        List<Task> tasks = (List<Task>) map.get("tasks");
-        for(Task t : tasks){
-            fileList.add(t.getResult());
-        }
-        String outputdir = Config.OUTPUT_DIR;
-        SimpleDateFormat sdf = new SimpleDateFormat("'archive'-ddMMyy-hhmmss.SSS.'zip'");
-        String zipFilepath = "" + outputdir + "\\" + sdf.format(new Date());
-        FileOutputStream fos;
+    protected void doWork(Job job, Task task) {
+    	List<Task> tasks = job.getTasks();
         try {
-            fos = new FileOutputStream(zipFilepath);
-            ZipOutputStream zos = new ZipOutputStream(fos);
+        	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(baos);
             byte[] buffer = new byte[1024];
-            for(String filename : fileList){
-                File currFile = new File(filename);
-                ZipEntry ze = new ZipEntry(currFile.getName());
+            for(Task currentTask : tasks){
+                ZipEntry ze = new ZipEntry("task-" + currentTask.getId());
                 zos.putNextEntry(ze);
-                FileInputStream in = new FileInputStream(currFile);
+                ByteArrayInputStream bais = new ByteArrayInputStream(currentTask.getResult());
                 int len;
-                while((len = in.read(buffer)) > 0){
+                while((len = bais.read(buffer)) > 0){
                     zos.write(buffer, 0, len);
                 }
-                in.close();
+                bais.close();
             }
             zos.closeEntry();
             zos.close();
+            job.setResult(baos.toByteArray());
+            em.merge(job);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("zipped {} files", fileList.size());
-        ResultMap results = new ResultMap(map);
-        results.put("zipLoc", zipFilepath);
-        returnResultMap(results);
+        logger.info("zipped {} files", tasks.size());
     }
     
     public static void main(String[] args) throws IOException {

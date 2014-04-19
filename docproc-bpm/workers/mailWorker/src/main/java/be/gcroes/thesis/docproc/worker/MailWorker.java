@@ -16,32 +16,34 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
 import be.gcroes.thesis.docproc.messaging.QueueWorker;
 import be.gcroes.thesis.docproc.messaging.ResultMap;
-import be.gcroes.thesis.docproc.task.MailTask;
 
 public class MailWorker extends QueueWorker{
     
     private static Logger logger = LoggerFactory.getLogger(MailWorker.class);
+    
+    public static final String QUEUE_NAME = "mail";
 
     public MailWorker() throws IOException {
-        super(MailTask.QUEUE_NAME);
+        super(QUEUE_NAME);
     }
 
     @Override
-    protected void doWork(Map<String, Object> map) {
-        Task currentTask = (Task) map.get("currentTask");
-        boolean mail = (Boolean)map.get("doMail");
-        String mailTo = (String) map.get("mailTo");
-        String mailSubject = (String) map.get("mailSubject");
-        String mailBody= (String) map.get("mailBody");
+    protected void doWork(Job job, Task task) {
+        boolean mail = true;
+        String mailTo = "${email}";
+        String mailSubject = "A docproc document has been generated";
+        String mailBody= "Download your docproc document here: http://127.0.0.1/download?jobid="
+        					+ job.getId() +"&taskid="+task.getId();
         
         if(mail){
             //fill in to, subject and body templates
             VelocityContext context = new VelocityContext();
             
-            for(Entry<String, String> entry : currentTask.getParams().entrySet()){
+            for(Entry<String, String> entry : task.getParams().entrySet()){
                 context.put(entry.getKey(), entry.getValue());
             }
             mailTo = fillTemplate(context, mailTo);
@@ -62,8 +64,7 @@ public class MailWorker extends QueueWorker{
                 e.printStackTrace();
             }
         }
-        ResultMap results = new ResultMap(map);
-        returnResultMap(results);
+        //TODO joins
     }
     
     private String fillTemplate(VelocityContext context, String template){

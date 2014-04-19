@@ -2,7 +2,6 @@ package be.gcroes.thesis.docproc.worker;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.velocity.VelocityContext;
@@ -10,25 +9,23 @@ import org.apache.velocity.app.Velocity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
 import be.gcroes.thesis.docproc.messaging.QueueWorker;
-import be.gcroes.thesis.docproc.messaging.ResultMap;
-import be.gcroes.thesis.docproc.task.TemplateToXslTask;
 
 public class TemplateToXslWorker extends QueueWorker {
     
     private static Logger logger = LoggerFactory.getLogger(TemplateToXslWorker.class);
+    
+    public static final String QUEUE_NAME = "template-to-xsl";
 
     public TemplateToXslWorker() throws IOException {
-        super(TemplateToXslTask.QUEUE_NAME);
+        super(QUEUE_NAME);
     }
 
     @Override
-    protected void doWork(Map<String, Object> map) {
-        String template = (String) map.get("template");
-        Task task = (Task) map.get("currentTask");
-        ResultMap results = new ResultMap(map);
-        
+    protected void doWork(Job job, Task task) {
+    	String template = job.getTemplate();
         try{
             VelocityContext context = new VelocityContext();
 
@@ -38,15 +35,13 @@ public class TemplateToXslWorker extends QueueWorker {
             StringWriter sw = new StringWriter();
             
             Velocity.evaluate(context, sw, "logtag", template);
-            
-            results.put("currentTemplate", sw.toString(), (String)map.get("executionId"));
-            
+            task.setFilledTemplate(sw.toString());
             sw.close();
         }catch(IOException ioe){
             ioe.printStackTrace();
         }
+        em.merge(task);
         logger.info("Processed template.");
-        returnResultMap(results);
     }
     
     public static void main(String[] args) throws Exception{
