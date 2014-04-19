@@ -17,11 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.gcroes.thesis.docproc.entity.Task;
-import be.gcroes.thesis.docproc.messaging.QueueConsumer;
+import be.gcroes.thesis.docproc.messaging.QueueWorker;
 import be.gcroes.thesis.docproc.messaging.ResultMap;
 import be.gcroes.thesis.docproc.task.MailTask;
 
-public class MailWorker extends QueueConsumer{
+public class MailWorker extends QueueWorker{
     
     private static Logger logger = LoggerFactory.getLogger(MailWorker.class);
 

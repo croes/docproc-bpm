@@ -1,7 +1,3 @@
-<%@page import="org.activiti.engine.history.HistoricProcessInstance"%>
-<%@page import="org.activiti.engine.ProcessEngines"%>
-<%@page import="org.activiti.engine.ProcessEngine"%>
-<%@page import="org.activiti.engine.HistoryService"%>
 <%@page import="javax.persistence.EntityManager"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="be.gcroes.thesis.docproc.entity.EntityManagerUtil"%>
@@ -10,7 +6,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.util.List, be.gcroes.thesis.docproc.entity.Job, be.gcroes.thesis.docproc.entity.Task, java.util.Map" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -57,25 +53,22 @@
 	        EntityManager em = emf.createEntityManager();
 	        String user = (String)session.getAttribute("user");
 	        String jobid = (String) request.getParameter("jobId");
-	        Job job = em.createQuery("SELECT j FROM Job j WHERE j.activitiJobId = " + jobid + " AND j.user = \'" + user + "\'", Job.class).getSingleResult();
-	        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-	        HistoryService historyService = processEngine.getHistoryService();
+	        Job job = em.createQuery("SELECT j FROM Job j WHERE j.i = " + jobid + " AND j.user = \'" + user + "\'", Job.class).getSingleResult();
 	        SimpleDateFormat dt = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss"); 
-	        HistoricProcessInstance hpi = historyService.createHistoricProcessInstanceQuery().processInstanceId(job.getActivitiJobId()).singleResult();
-	        String startedOn = dt.format(hpi.getStartTime());
-	        String finishedOn = dt.format(hpi.getEndTime());
-	        String duration = (hpi.getDurationInMillis() / 1000f) + " seconds";
+	        String startedOn = dt.format(job.getStartTime());
+	        String finishedOn = dt.format(job.getEndTime());
+	        String duration = (job.getDurationInSeconds()) + " seconds";
 	     %>
 	     <h3>Job info</h3>
 	     <table class="table table-striped table-bordered table-condensed">
-	     	<tr><td>ID</td><td><%=job.getActivitiJobId() %></td></tr>
+	     	<tr><td>ID</td><td><%=job.getId() %></td></tr>
 	     	<tr><td>Started on</td><td><%=startedOn %></td></tr>
 	     	<tr><td>Started on</td><td><%=finishedOn %></td></tr>
 	     	<tr><td>Duration</td><td><%=duration %></td></tr>
 	     	<tr><td>Number of tasks</td><td><%=job.getTasks().size() %></td></tr>
 	     	<tr><td>Template</td><td><%=job.getTemplate() %></td></tr>
 	     	<tr><td>Input data</td><td><%=job.getInputdata() %></td></tr>
-	     	<tr><td>Job result</td><td><a href="${pageContext.request.contextPath}/download?jobId=<%=job.getActivitiJobId()%>">Download zip</a></td></tr>
+	     	<tr><td>Job result</td><td><a href="${pageContext.request.contextPath}/download?jobId=<%=job.getId()%>">Download zip</a></td></tr>
 	     </table>
 	     <h3>Tasks</h3>
 	     <table class="table table-striped table-bordered table-condensed">
@@ -98,7 +91,7 @@
 	           			}
 	           			%>
 	           		</ul>
-	           	<td> <a href="${pageContext.request.contextPath}/download?jobId=<%=job.getActivitiJobId()%>&taskId=<%=task.getId()%>">Download</a></td>
+	           	<td> <a href="${pageContext.request.contextPath}/download?jobId=<%=job.getId()%>&taskId=<%=task.getId()%>">Download</a></td>
 	           </tr> 
 	        <% }
 		%>

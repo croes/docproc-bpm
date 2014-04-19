@@ -1,7 +1,3 @@
-<%@page import="org.activiti.engine.history.HistoricProcessInstance"%>
-<%@page import="org.activiti.engine.ProcessEngines"%>
-<%@page import="org.activiti.engine.ProcessEngine"%>
-<%@page import="org.activiti.engine.HistoryService"%>
 <%@page import="javax.persistence.EntityManager"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="be.gcroes.thesis.docproc.entity.EntityManagerUtil"%>
@@ -10,7 +6,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.util.List, be.gcroes.thesis.docproc.entity.Job" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -66,26 +62,20 @@
 	        EntityManager em = emf.createEntityManager();
 	        String user = (String)session.getAttribute("user");
 	        List<Job> jobs = em.createQuery("SELECT j FROM Job j WHERE j.user = \'" + user + "\'", Job.class).getResultList();
-	        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-	        HistoryService historyService = processEngine.getHistoryService();
 	        SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss"); 
 	        for(Job job : jobs){
-	            HistoricProcessInstance hpi = historyService.createHistoricProcessInstanceQuery().processInstanceId(job.getActivitiJobId()).singleResult();
-	            String startedOn = "NA", finishedOn = "NA", duration = "NA";
-	            if(hpi != null){
-	            startedOn = dt.format(hpi.getStartTime());
-	            finishedOn = dt.format(hpi.getEndTime());
-	            duration = (hpi.getDurationInMillis() / 1000f) + " seconds";
-	            }
+	            String startedOn = job.getStartTime() != null ? dt.format(job.getStartTime()) : "NA";
+	            String finishedOn = job.getEndTime() != null ? dt.format(job.getEndTime()) : "NA";
+	            String duration = job.getDurationInSeconds() != -1 ? job.getDurationInSeconds() + " seconds" : "NA";
 	            %>
 	           <tr>
-	           	<td> <a href="${pageContext.request.contextPath}/service/history/historic-process-instances/<%=job.getActivitiJobId()%>"> <%=job.getActivitiJobId() %> </a></td>
+	           	<td> <a href="${pageContext.request.contextPath}/service/history/historic-process-instances/<%=job.getId()%>"> <%=job.getId() %> </a></td>
 	           	<td> <%=startedOn%> </td>
 	           	<td> <%=finishedOn%> </td>
 	           	<td> <%=duration %> </td>
 	           	<td> <%=job.getTasks().size()%></td>
-	           	<td> <a href="${pageContext.request.contextPath}/details.jsp?jobId=<%=job.getActivitiJobId()%>">Details</a></td>
-	           	<td> <a href="${pageContext.request.contextPath}/download?jobId=<%=job.getActivitiJobId()%>">Download zip</a></td>
+	           	<td> <a href="${pageContext.request.contextPath}/details.jsp?jobId=<%=job.getId()%>">Details</a></td>
+	           	<td> <a href="${pageContext.request.contextPath}/download?jobId=<%=job.getId()%>">Download zip</a></td>
 	           </tr> 
 	        <% }
 		%>

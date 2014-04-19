@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 import be.gcroes.thesis.docproc.entity.EntityManagerUtil;
 import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
-import be.gcroes.thesis.docproc.messaging.QueueConsumer;
+import be.gcroes.thesis.docproc.messaging.QueueWorker;
 import be.gcroes.thesis.docproc.messaging.ResultMap;
 import be.gcroes.thesis.docproc.task.SaveProcessDataTask;
 
-public class SaveDataWorker extends QueueConsumer {
+public class SaveDataWorker extends QueueWorker {
     
     private static Logger logger = LoggerFactory
             .getLogger(SaveDataWorker.class);

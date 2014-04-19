@@ -26,12 +26,12 @@ import org.slf4j.LoggerFactory;
 
 import be.gcroes.thesis.docproc.config.Config;
 import be.gcroes.thesis.docproc.entity.Task;
-import be.gcroes.thesis.docproc.messaging.QueueConsumer;
+import be.gcroes.thesis.docproc.messaging.QueueWorker;
 import be.gcroes.thesis.docproc.messaging.ResultMap;
 import be.gcroes.thesis.docproc.task.ClassPathURIResolver;
 import be.gcroes.thesis.docproc.task.XslFoRenderTask;
 
-public class XslFoRenderWorker extends QueueConsumer{
+public class XslFoRenderWorker extends QueueWorker{
     
     private static Logger logger = LoggerFactory
             .getLogger(XslFoRenderWorker.class);

@@ -1,15 +1,3 @@
-var findProcessDefId = function(){
-    var settings = {
-            accepts:"application/json",
-            url:"service/repository/process-definitions",
-            type:"GET",
-            data:{key:"docproc"}
-            };
-    $.ajax(settings).done(function(data){
-        processDefId = data.data[0].id;
-    });
-};
-
 function handleTemplateSelect(evt) {
     var file = evt.target.files[0];
     var reader = new FileReader();
@@ -90,7 +78,6 @@ $(document).ready(function(){
                             }
                         ];
         var requestObj = {
-                    processDefinitionId:processDefId,
                     variables: variables
                  };
         var settings = {
@@ -107,8 +94,5 @@ $(document).ready(function(){
         });
     });
 });
-
-var processDefId = null;
-findProcessDefId();
 
 

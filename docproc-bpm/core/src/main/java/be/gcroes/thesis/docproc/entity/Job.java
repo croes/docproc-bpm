@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.joda.time.Seconds;
 
 @Entity
 @Table(name = "Jobs")
@@ -39,8 +40,8 @@ public class Job implements Serializable {
     @OneToMany(mappedBy="job", cascade=CascadeType.ALL)
 	private List<Task> tasks = new ArrayList<Task>();
 
-	@Column(name="result", columnDefinition="TEXT")
-	private String result;
+	@Column(name="result", columnDefinition="BLOB")
+	private byte[] result;
 
 	@Column(name="starttime")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -125,12 +126,21 @@ public class Job implements Serializable {
         tasks.addAll(tasks);
     }
 
-	public String getResult() {
+	public byte[] getResult() {
 	    return result;
 	}
 
-	public void setResult(String result) {
+	public void setResult(byte[] result) {
 	    this.result = result;
+	}
+	
+	public int getDurationInSeconds(){
+		if(getStartTime() != null && getEndTime() != null){
+			return Seconds.secondsBetween(getStartTime(), getEndTime()).getSeconds();
+		}else if(getStartTime() != null && getEndTime() == null){
+			return Seconds.secondsBetween(getStartTime(), new DateTime()).getSeconds();
+		}
+		return -1;
 	}
     
 }

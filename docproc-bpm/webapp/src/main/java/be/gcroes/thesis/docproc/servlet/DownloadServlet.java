@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 import be.gcroes.thesis.docproc.entity.EntityManagerUtil;
 import be.gcroes.thesis.docproc.entity.Job;
@@ -39,21 +42,21 @@ public class DownloadServlet extends HttpServlet {
             EntityManager em = emf.createEntityManager();
             if (jobId != null && taskId == null) {
                 Job job = em.createQuery(
-                        "SELECT j FROM Job j WHERE j.activitiJobId = " + jobId
+                        "SELECT j FROM Job j WHERE j.id = " + jobId
                                 + " AND j.user = \'" + user + "\'", Job.class)
                         .getSingleResult();
-                String filepath = job.getResult();
-                sendFile(request, response, filepath);
+                byte[] result = job.getResult();
+                sendFile(request, response, result);
             }
             if (jobId != null && taskId != null) {
                 Task task = em
                         .createQuery("SELECT t FROM Task t, Job j WHERE" +
                                   " t.id = " + taskId
-                                + " AND j.activitiJobId = " + jobId
+                                + " AND j.id = " + jobId
                                 + " AND j.user = \'" + user + "\'"
                                 + " AND t.job = j", Task.class).getSingleResult();
-                String filepath = task.getResult();
-                sendFile(request, response, filepath);
+                byte[] result = task.getResult();
+                sendFile(request, response, result);
             }
         } else {
             response.getWriter().write("Access denied. Please login before downloading a file.");
@@ -62,22 +65,19 @@ public class DownloadServlet extends HttpServlet {
     }
 
     private void sendFile(HttpServletRequest request,
-            HttpServletResponse response, String filepath) throws IOException {
-       File file = new File(filepath);
-       int length = 0;
+            HttpServletResponse response, byte[] data) throws IOException {
        ServletOutputStream outStream = response.getOutputStream();
-       ServletContext context = getServletConfig().getServletContext();
-       String mimetype = context.getMimeType(filepath);
-       if(mimetype == null){
-           mimetype = "application/octet-stream";
-       }
+       //ServletContext context = getServletConfig().getServletContext();
+       //String mimetype = context.getMimeType(filepath);
+       String mimetype = "application/octet-stream";
        response.setContentType(mimetype);
-       response.setContentLength((int)file.length());
-       String fileName = (new File(filepath).getName());
-       response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+       response.setContentLength(data.length);
+       //String fileName = (new File(filepath).getName());
+       response.setHeader("Content-Disposition", "attachment; filename=\"result.pdf\"");
        
        byte[] bytebuffer = new byte[BUFSIZE];
-       DataInputStream in = new DataInputStream(new FileInputStream(filepath));
+       DataInputStream in = new DataInputStream(new ByteInputStream(data, data.length));
+       int length = 0;
        while ( (in != null) && ((length = in.read(bytebuffer)) != -1)){
            outStream.write(bytebuffer, 0, length);
        }

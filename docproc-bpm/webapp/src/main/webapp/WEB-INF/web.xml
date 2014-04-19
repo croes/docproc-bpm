@@ -25,6 +25,13 @@
 		<servlet-name>DownloadServlet</servlet-name>
 		<servlet-class>be.gcroes.thesis.docproc.servlet.DownloadServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>AddJob</display-name>
+		<servlet-name>AddJob</servlet-name>
+		<servlet-class>be.gcroes.thesis.docproc.servlet.AddJob</servlet-class>
+	</servlet>
 	<!-- Catch all requests -->
 	<servlet-mapping>
 		<servlet-name>RestletServlet</servlet-name>
@@ -34,6 +41,10 @@
 	<servlet-mapping>
 		<servlet-name>DownloadServlet</servlet-name>
 		<url-pattern>/download</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AddJob</servlet-name>
+		<url-pattern>/AddJob</url-pattern>
 	</servlet-mapping>
 	<security-constraint>
 		<display-name>Security Constraint</display-name>
