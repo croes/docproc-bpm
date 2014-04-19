@@ -17,13 +17,11 @@
   	</resources>
   </build>
   <modules>
-  	<module>incomingWorker</module>
   	<module>csvToDataWorker</module>
   	<module>mailWorker</module>
   	<module>templateWorker</module>
   	<module>renderWorker</module>
   	<module>zipWorker</module>
-  	<module>saveDataWorker</module>
   </modules>
   <dependencies>
   	<dependency>
