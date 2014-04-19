@@ -1,21 +1,17 @@
 package be.gcroes.thesis.docproc.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 import be.gcroes.thesis.docproc.entity.EntityManagerUtil;
 import be.gcroes.thesis.docproc.entity.Job;
@@ -76,7 +72,7 @@ public class DownloadServlet extends HttpServlet {
        response.setHeader("Content-Disposition", "attachment; filename=\"result.pdf\"");
        
        byte[] bytebuffer = new byte[BUFSIZE];
-       DataInputStream in = new DataInputStream(new ByteInputStream(data, data.length));
+       DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
        int length = 0;
        while ( (in != null) && ((length = in.read(bytebuffer)) != -1)){
            outStream.write(bytebuffer, 0, length);
