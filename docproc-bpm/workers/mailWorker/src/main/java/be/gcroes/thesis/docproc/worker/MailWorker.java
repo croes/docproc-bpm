@@ -2,8 +2,9 @@ package be.gcroes.thesis.docproc.worker;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.persistence.EntityTransaction;
 
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -18,17 +19,19 @@ import org.slf4j.LoggerFactory;
 
 import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
+import be.gcroes.thesis.docproc.messaging.QueueMessageSender;
 import be.gcroes.thesis.docproc.messaging.QueueWorker;
-import be.gcroes.thesis.docproc.messaging.ResultMap;
 
 public class MailWorker extends QueueWorker{
     
     private static Logger logger = LoggerFactory.getLogger(MailWorker.class);
     
     public static final String QUEUE_NAME = "mail";
+    private QueueMessageSender qSender;
 
     public MailWorker() throws IOException {
         super(QUEUE_NAME);
+        qSender = new QueueMessageSender("zip");
     }
 
     @Override
@@ -64,10 +67,32 @@ public class MailWorker extends QueueWorker{
                 e.printStackTrace();
             }
         }
-        //TODO joins
+        decreaseJobCount(job);
+        if(job.getNbOfTasksLeft() <= 0){
+        	try{
+            	qSender.send(job, task);
+            	logger.info("Sent message on zip queue.");
+            }catch(IOException ioe){
+            	logger.warn("Could not send message on zip queue");
+            }
+        }
+        
     }
     
-    private String fillTemplate(VelocityContext context, String template){
+    private void decreaseJobCount(Job job) {
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		try{
+			job.decrementTasksLeft();
+			em.merge(job);
+			tx.commit();
+		}catch(Exception e){
+			tx.rollback();
+			logger.warn("Could not decrement job count!");
+		}
+	}
+
+	private String fillTemplate(VelocityContext context, String template){
         StringWriter sw = new StringWriter();
         try {
             Velocity.evaluate(context, sw, "logtag", template);
@@ -77,12 +102,6 @@ public class MailWorker extends QueueWorker{
             e.printStackTrace();
         }
         return sw.toString();
-    }
-    
-    public static void main(String[] args) throws Exception{
-        MailWorker worker = new MailWorker();
-        Thread t = new Thread(worker);
-        t.start();
     }
 
 }

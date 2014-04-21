@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
+import be.gcroes.thesis.docproc.messaging.QueueMessageSender;
 import be.gcroes.thesis.docproc.messaging.QueueWorker;
 
 public class TemplateToXslWorker extends QueueWorker {
@@ -18,6 +19,7 @@ public class TemplateToXslWorker extends QueueWorker {
     private static Logger logger = LoggerFactory.getLogger(TemplateToXslWorker.class);
     
     public static final String QUEUE_NAME = "template-to-xsl";
+    private QueueMessageSender qSender = new QueueMessageSender("render");
 
     public TemplateToXslWorker() throws IOException {
         super(QUEUE_NAME);
@@ -41,12 +43,14 @@ public class TemplateToXslWorker extends QueueWorker {
             ioe.printStackTrace();
         }
         em.merge(task);
+        
+        try {
+			qSender.send(job, task);
+		} catch (IOException e) {
+			logger.warn("Could not place message on render queue.");
+			e.printStackTrace();
+		}
+        
         logger.info("Processed template.");
-    }
-    
-    public static void main(String[] args) throws Exception{
-        TemplateToXslWorker worker = new TemplateToXslWorker();
-        Thread t = new Thread(worker);
-        t.start();
     }
 }

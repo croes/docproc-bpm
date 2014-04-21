@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.EntityTransaction;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,8 @@ public class CsvToDataWorker extends QueueWorker{
 	     logger.info("csv-to-task: Read {} tasks.", tasks.size());
 	     
 	     persistAllTasks(tasks);
-	     
-	     
+	     job.setStartTime(new DateTime());
+	     em.merge(job);
 	     for(Task currentTask : tasks){
 	    	 try {
 	    		qSender.send(job, currentTask);

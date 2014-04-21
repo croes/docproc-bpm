@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
+import be.gcroes.thesis.docproc.messaging.QueueMessageSender;
 import be.gcroes.thesis.docproc.messaging.QueueWorker;
 import be.gcroes.thesis.docproc.task.ClassPathURIResolver;
 
@@ -32,9 +33,11 @@ public class XslFoRenderWorker extends QueueWorker{
             .getLogger(XslFoRenderWorker.class);
     
     public static final String QUEUE_NAME = "xsl-fo-render";
+    private QueueMessageSender qSender;
     
     public XslFoRenderWorker() throws IOException {
         super(QUEUE_NAME);
+        qSender = new QueueMessageSender("mail");
     }
 
     @Override
@@ -64,12 +67,12 @@ public class XslFoRenderWorker extends QueueWorker{
         } catch (FOPException | TransformerException | IOException e) {
             e.printStackTrace();
         }
-    }
-    
-    
-    public static void main(String[] args) throws IOException {
-        XslFoRenderWorker xslworker = new XslFoRenderWorker();
-        Thread t = new Thread(xslworker);
-        t.start();
+        
+        try{
+        	qSender.send(job, task);
+        }catch(IOException ioe){
+        	logger.warn("Could not send message on mail queue");
+        	ioe.printStackTrace();
+        }
     }
 }

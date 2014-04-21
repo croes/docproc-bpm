@@ -50,6 +50,9 @@ public class Job implements Serializable {
 	@Column(name="endtime")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime endTime;
+	
+	@Column(name="tasksLeft")
+	private int tasksLeft = 0;
 
 	public Job(){
 	
@@ -141,6 +144,18 @@ public class Job implements Serializable {
 			return Seconds.secondsBetween(getStartTime(), new DateTime()).getSeconds();
 		}
 		return -1;
+	}
+	
+	public int getNbOfTasksLeft(){
+		return tasksLeft;
+	}
+	
+	public void setNbOfTasksLeft(int count){
+		this.tasksLeft = count;
+	}
+	
+	public void decrementTasksLeft(){
+		this.tasksLeft--;
 	}
     
 }

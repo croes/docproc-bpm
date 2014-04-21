@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,17 +45,12 @@ public class ZipWorker extends QueueWorker {
             zos.closeEntry();
             zos.close();
             job.setResult(baos.toByteArray());
+            job.setEndTime(new DateTime());
             em.merge(job);
         } catch (IOException e) {
             e.printStackTrace();
         }
         logger.info("zipped {} files", tasks.size());
-    }
-    
-    public static void main(String[] args) throws IOException {
-        ZipWorker worker = new ZipWorker();
-        Thread t = new Thread(worker);
-        t.start();
     }
 
 }
