@@ -13,13 +13,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import be.gcroes.thesis.docproc.entity.EntityManagerUtil;
 import be.gcroes.thesis.docproc.entity.Job;
 import be.gcroes.thesis.docproc.entity.Task;
+import be.gcroes.thesis.docproc.messaging.EndPoint;
 
 public class DownloadServlet extends HttpServlet {
 
     private static final int BUFSIZE = 4096;
+    
+    private static Logger logger = LoggerFactory.getLogger(DownloadServlet.class);
 
     /**
      * 

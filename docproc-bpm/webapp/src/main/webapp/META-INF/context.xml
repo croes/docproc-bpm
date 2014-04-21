@@ -1,4 +1,4 @@
-<Context debug="99" reloadable="true">
+<Context reloadable="true">
 
 	<Realm className="org.apache.catalina.realm.JNDIRealm"
 	connectionURL="ldap://192.168.75.3:389"

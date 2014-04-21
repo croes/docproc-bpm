@@ -34,7 +34,7 @@
 				<li><a href="${pageContext.request.contextPath}/logout.jsp">Logout</a></li>
 			</ul>
 			<p class="navbar-text navbar-right">
-				<span class="glyphicon glyphicon-user"></span><%=session.getAttribute("user")%>
+				<span class="glyphicon glyphicon-user"></span><%=request.getUserPrincipal().getName()%>
 			</p>
 		</div>
 	</div>

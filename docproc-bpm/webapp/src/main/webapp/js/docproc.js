@@ -42,52 +42,18 @@ $(document).ready(function(){
     })
     
     $("#submitbtn").click(function(){
-        var variables = [
-                           {
-                                name: "template",
-                                value: $('#template').val(),
-                                
-                            },
-                            {
-                                name: "data",
-                                value: $('#data').val()
-                            },
-                            {
-                                name: "startAfter",
-                                value: $('#startAfter').val()
-                            },
-                            {
-                                name: "finishBefore",
-                                value: $('#startBefore').val()
-                            },
-                            {
-                                name: "doMail",
-                                value: true
-                            },
-                            {
-                                name: "mailTo",
-                                value: "${email}"
-                            },
-                            {
-                                name: "mailSubject",
-                                value: "Docproc invoice"
-                            },
-                            {
-                                name: "mailBody",
-                                value: "Dear ${name},\n \nYour document has been processed.\n\nKind regards,\nTeam Docproc"
-                            }
-                        ];
         var requestObj = {
-                    variables: variables
-                 };
-        var settings = {
-            contentType:"application/json",
-            accepts:"application/json",
-            url:"service/runtime/process-instances",
-            type:"POST",
-            data: JSON.stringify(requestObj)
-            };
-        $.ajax(settings).done(function(data){
+                         	template : $('#template').val(),
+                         	data: $('#data').val(),
+                         	startAfter : $('#startAfter').val(),
+                         	finishBefore : $('#startBefore').val(),
+                         	doMail : true,
+                         	mailTo : "${email}",
+                         	mailSubject : "Docproc invoice",
+                         	mailBody : "Dear ${name},\n \nYour document has been processed.\n\nKind regards,\nTeam Docproc"
+                         };
+        
+        $.post('AddJob', requestObj, function(data){
         	console.log(data);
             $('#submitbtn').hide();
             $('.container').append('<p>' + JSON.stringify(data) + '</p>');

@@ -4,6 +4,7 @@
 <%@page import="javax.persistence.EntityManagerFactory"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ page import="java.util.List, be.gcroes.thesis.docproc.entity.Job, be.gcroes.thesis.docproc.entity.Task, java.util.Map" %>
 
 <!DOCTYPE html>
@@ -41,7 +42,7 @@
 				<li><a href="${pageContext.request.contextPath}/logout.jsp">Logout</a></li>
 			</ul>
 			<p class="navbar-text navbar-right">
-				<span class="glyphicon glyphicon-user"></span><%=session.getAttribute("user")%>
+				<span class="glyphicon glyphicon-user"></span><%=request.getUserPrincipal().getName()%>
 			</p>
 		</div>
 	</div>
@@ -51,19 +52,16 @@
 		<%
 			EntityManagerFactory emf = EntityManagerUtil.getEntityManagerFactory();
 	        EntityManager em = emf.createEntityManager();
-	        String user = (String)session.getAttribute("user");
+	        String user = request.getUserPrincipal().getName();
 	        String jobid = (String) request.getParameter("jobId");
-	        Job job = em.createQuery("SELECT j FROM Job j WHERE j.i = " + jobid + " AND j.user = \'" + user + "\'", Job.class).getSingleResult();
-	        SimpleDateFormat dt = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss"); 
-	        String startedOn = dt.format(job.getStartTime());
-	        String finishedOn = dt.format(job.getEndTime());
+	        Job job = em.createQuery("SELECT j FROM Job j WHERE j.id = " + jobid + " AND j.user = \'" + user + "\'", Job.class).getSingleResult();
 	        String duration = (job.getDurationInSeconds()) + " seconds";
 	     %>
 	     <h3>Job info</h3>
 	     <table class="table table-striped table-bordered table-condensed">
 	     	<tr><td>ID</td><td><%=job.getId() %></td></tr>
-	     	<tr><td>Started on</td><td><%=startedOn %></td></tr>
-	     	<tr><td>Started on</td><td><%=finishedOn %></td></tr>
+	     	<tr><td>Started on</td><td><joda:format value="${job.startTime}" style="SM" /></td></tr>
+	     	<tr><td>Finished on</td><td><joda:format value="${job.endTime}" style="SM" /></td></tr>
 	     	<tr><td>Duration</td><td><%=duration %></td></tr>
 	     	<tr><td>Number of tasks</td><td><%=job.getTasks().size() %></td></tr>
 	     	<tr><td>Template</td><td><%=job.getTemplate() %></td></tr>

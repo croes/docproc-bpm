@@ -22,7 +22,7 @@ public class HibernateTest{
     @Before
     public void beforeEach()
     {
-       em = EntityManagerUtil.getEntityManagerFactory().createEntityManager();
+       em = EntityManagerUtil.getTestEntityManagerFactory().createEntityManager();
     }
 
     @After

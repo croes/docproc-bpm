@@ -34,7 +34,7 @@ public class Job implements Serializable {
     @Column(name="inputdata", columnDefinition="TEXT")
     private String inputdata;
     
-    @Column(name="user", columnDefinition="VARCHAR(64)")
+    @Column(name="owner", columnDefinition="VARCHAR(64)")
     private String user;
     
     @OneToMany(mappedBy="job", cascade=CascadeType.ALL)

@@ -12,6 +12,7 @@
 	<build>
 		<finalName>docproc</finalName>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>be.gcroes.thesis.docproc-bpm</groupId>
@@ -35,6 +36,11 @@
 			<artifactId>catalina</artifactId>
 			<version>6.0.37</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time-jsptags</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 </project>
