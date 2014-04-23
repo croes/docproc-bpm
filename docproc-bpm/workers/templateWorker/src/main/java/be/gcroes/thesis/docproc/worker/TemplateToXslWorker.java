@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map.Entry;
 
+import javax.persistence.EntityTransaction;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.slf4j.Logger;
@@ -19,10 +21,12 @@ public class TemplateToXslWorker extends QueueWorker {
     private static Logger logger = LoggerFactory.getLogger(TemplateToXslWorker.class);
     
     public static final String QUEUE_NAME = "template-to-xsl";
-    private QueueMessageSender qSender = new QueueMessageSender("render");
+    private QueueMessageSender qSender;
 
     public TemplateToXslWorker() throws IOException {
         super(QUEUE_NAME);
+        qSender = new QueueMessageSender("render");
+        logger.info("TEMPLATE TO XSL WORKER CREATED");
     }
 
     @Override
@@ -37,15 +41,21 @@ public class TemplateToXslWorker extends QueueWorker {
             StringWriter sw = new StringWriter();
             
             Velocity.evaluate(context, sw, "logtag", template);
-            task.setFilledTemplate(sw.toString());
+            String filledTemplate = sw.toString();
+            task.setFilledTemplate(filledTemplate);
+            logger.info("Filled template: {}", filledTemplate);
             sw.close();
         }catch(IOException ioe){
             ioe.printStackTrace();
         }
-        em.merge(task);
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+        task = em.merge(task);
+        tx.commit();
         
         try {
 			qSender.send(job, task);
+			logger.debug("Sent message on render queue.");
 		} catch (IOException e) {
 			logger.warn("Could not place message on render queue.");
 			e.printStackTrace();

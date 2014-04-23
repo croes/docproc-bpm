@@ -32,7 +32,7 @@
                         </descriptorRefs>
                         <archive>
                             <manifest>
-                                <mainClass>be.gcroes.thesis.docproc.worker.ZipWorker</mainClass>
+                                <mainClass>be.gcroes.thesis.docproc.worker.app.Main</mainClass>
                             </manifest>
                         </archive>
                         <appendAssemblyId>false</appendAssemblyId>

@@ -31,24 +31,30 @@ public class DownloadServlet extends HttpServlet {
      * 
      */
     private static final long serialVersionUID = -5564482169209224817L;
+    
+    private EntityManager em;
+    
+    public void init(){
+    	EntityManagerFactory emf = EntityManagerUtil
+                .getEntityManagerFactory();
+        em = emf.createEntityManager();
+    }
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        String jobId = request.getParameter("jobId");
+        
+    	String jobId = request.getParameter("jobId");
         String taskId = request.getParameter("taskId");
-        if (session != null) {
-            String user = (String) session.getAttribute("user");
-            EntityManagerFactory emf = EntityManagerUtil
-                    .getEntityManagerFactory();
-            EntityManager em = emf.createEntityManager();
+            
+        if(request.getUserPrincipal() != null){
+        	String user = request.getUserPrincipal().getName();
             if (jobId != null && taskId == null) {
                 Job job = em.createQuery(
                         "SELECT j FROM Job j WHERE j.id = " + jobId
                                 + " AND j.user = \'" + user + "\'", Job.class)
                         .getSingleResult();
                 byte[] result = job.getResult();
-                sendFile(request, response, result);
+                sendFile(request, response, result, "job-" + job.getId() + ".zip");
             }
             if (jobId != null && taskId != null) {
                 Task task = em
@@ -58,16 +64,13 @@ public class DownloadServlet extends HttpServlet {
                                 + " AND j.user = \'" + user + "\'"
                                 + " AND t.job = j", Task.class).getSingleResult();
                 byte[] result = task.getResult();
-                sendFile(request, response, result);
+                sendFile(request, response, result, "task-" + task.getId() + ".pdf");
             }
-        } else {
-            response.getWriter().write("Access denied. Please login before downloading a file.");
         }
-
     }
 
     private void sendFile(HttpServletRequest request,
-            HttpServletResponse response, byte[] data) throws IOException {
+            HttpServletResponse response, byte[] data, String filename) throws IOException {
        ServletOutputStream outStream = response.getOutputStream();
        //ServletContext context = getServletConfig().getServletContext();
        //String mimetype = context.getMimeType(filepath);
@@ -75,7 +78,7 @@ public class DownloadServlet extends HttpServlet {
        response.setContentType(mimetype);
        response.setContentLength(data.length);
        //String fileName = (new File(filepath).getName());
-       response.setHeader("Content-Disposition", "attachment; filename=\"result.pdf\"");
+       response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
        
        byte[] bytebuffer = new byte[BUFSIZE];
        DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));

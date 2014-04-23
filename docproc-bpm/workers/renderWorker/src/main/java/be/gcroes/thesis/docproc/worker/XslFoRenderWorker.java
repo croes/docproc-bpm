@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 
+import javax.persistence.EntityTransaction;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -32,12 +33,13 @@ public class XslFoRenderWorker extends QueueWorker{
     private static Logger logger = LoggerFactory
             .getLogger(XslFoRenderWorker.class);
     
-    public static final String QUEUE_NAME = "xsl-fo-render";
+    public static final String QUEUE_NAME = "render";
     private QueueMessageSender qSender;
     
     public XslFoRenderWorker() throws IOException {
         super(QUEUE_NAME);
         qSender = new QueueMessageSender("mail");
+        logger.info("XSLFORENDERWORKER CREATED");
     }
 
     @Override
@@ -62,7 +64,10 @@ public class XslFoRenderWorker extends QueueWorker{
             out.close();
             
             task.setResult(boas.toByteArray());
-            em.merge(task);
+            EntityTransaction tx = em.getTransaction();
+            tx.begin();
+            task = em.merge(task);
+            tx.commit();
             logger.info("Rendered XSL.");
         } catch (FOPException | TransformerException | IOException e) {
             e.printStackTrace();

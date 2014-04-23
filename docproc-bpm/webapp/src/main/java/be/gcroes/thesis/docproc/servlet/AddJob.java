@@ -59,8 +59,8 @@ public class AddJob extends HttpServlet {
 			tx.begin();
 			try{
 				em.persist(job);
-				qSender.send(job, null);
 				tx.commit();
+				qSender.send(job, null);
 				logger.info("Added job {} to csv-to-data queue", job.getId());
 			}catch(IOException ioe){
 				ioe.printStackTrace();

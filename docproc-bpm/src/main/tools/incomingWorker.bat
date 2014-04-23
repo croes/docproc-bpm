@@ -1,1 +1,0 @@
-start cmd /k java -jar ..\..\..\workers\incomingWorker\target\incomingWorker.jar

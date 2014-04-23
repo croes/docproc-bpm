@@ -25,12 +25,12 @@ public class QueueMessageSender{
     }
 
     public void send(Job job, Task task) throws IOException {
-        logger.info("sending message on queue {} with job id {} and task id {}", producer.endPointName, job.getId(), task.getId());
         int jobId = job.getId();
         int taskId = -1;
         if(task != null){
         	taskId = task.getId();
         }
+        logger.info("sending message on queue {} with job id {} and task id {}", producer.endPointName, jobId, taskId);
         producer.sendMessage(String.format("job[%d]+task[%d]", jobId, taskId));
     }
     

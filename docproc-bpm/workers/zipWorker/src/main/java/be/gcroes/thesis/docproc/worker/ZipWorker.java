@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.persistence.EntityTransaction;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ public class ZipWorker extends QueueWorker {
 
     public ZipWorker() throws IOException {
         super(QUEUE_NAME);
+        logger.info("ZIP WORKER CREATED");
     }
 
     @Override
@@ -33,7 +36,7 @@ public class ZipWorker extends QueueWorker {
             ZipOutputStream zos = new ZipOutputStream(baos);
             byte[] buffer = new byte[1024];
             for(Task currentTask : tasks){
-                ZipEntry ze = new ZipEntry("task-" + currentTask.getId());
+                ZipEntry ze = new ZipEntry("task-" + currentTask.getId() + ".pdf");
                 zos.putNextEntry(ze);
                 ByteArrayInputStream bais = new ByteArrayInputStream(currentTask.getResult());
                 int len;
@@ -46,7 +49,10 @@ public class ZipWorker extends QueueWorker {
             zos.close();
             job.setResult(baos.toByteArray());
             job.setEndTime(new DateTime());
-            em.merge(job);
+            EntityTransaction tx = em.getTransaction();
+            tx.begin();
+            job = em.merge(job);
+            tx.commit();
         } catch (IOException e) {
             e.printStackTrace();
         }

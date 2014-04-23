@@ -32,6 +32,7 @@ public class MailWorker extends QueueWorker{
     public MailWorker() throws IOException {
         super(QUEUE_NAME);
         qSender = new QueueMessageSender("zip");
+        logger.info("MAILWORKER CREATED");
     }
 
     @Override

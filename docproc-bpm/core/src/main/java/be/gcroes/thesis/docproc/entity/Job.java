@@ -28,10 +28,10 @@ public class Job implements Serializable {
     @Column(name="id")
     private int id;
     
-    @Column(name="template", columnDefinition="TEXT")
+    @Column(name="template", columnDefinition="LONGTEXT")
     private String template;
     
-    @Column(name="inputdata", columnDefinition="TEXT")
+    @Column(name="inputdata", columnDefinition="LONGTEXT")
     private String inputdata;
     
     @Column(name="owner", columnDefinition="VARCHAR(64)")
@@ -40,7 +40,7 @@ public class Job implements Serializable {
     @OneToMany(mappedBy="job", cascade=CascadeType.ALL)
 	private List<Task> tasks = new ArrayList<Task>();
 
-	@Column(name="result", columnDefinition="BLOB")
+	@Column(name="result", columnDefinition="LONGBLOB")
 	private byte[] result;
 
 	@Column(name="starttime")

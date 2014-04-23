@@ -27,6 +27,7 @@ public class CsvToDataWorker extends QueueWorker{
     public CsvToDataWorker() throws IOException {
         super(QUEUE_NAME);
         qSender = new QueueMessageSender("template-to-xsl");
+        logger.info("CSVTODATAWORKER CREATED");
     }
 
 	@Override
@@ -54,7 +55,11 @@ public class CsvToDataWorker extends QueueWorker{
 	     
 	     persistAllTasks(tasks);
 	     job.setStartTime(new DateTime());
-	     em.merge(job);
+	     job.setNbOfTasksLeft(tasks.size());
+	     EntityTransaction tx = em.getTransaction();
+	     tx.begin();
+	     job = em.merge(job);
+	     tx.commit();
 	     for(Task currentTask : tasks){
 	    	 try {
 	    		qSender.send(job, currentTask);

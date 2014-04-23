@@ -34,10 +34,10 @@ public class Task implements Serializable{
     @JoinColumn(name="jobid")
     private Job job;
     
-    @Column(name="filledtemplate", columnDefinition="TEXT")
+    @Column(name="filledtemplate", columnDefinition="LONGTEXT")
     private String filledTemplate;
     
-    @Column(name="result", columnDefinition="BLOB")
+    @Column(name="result", columnDefinition="LONGBLOB")
     private byte[] result;
     
     @ElementCollection(fetch=FetchType.EAGER)

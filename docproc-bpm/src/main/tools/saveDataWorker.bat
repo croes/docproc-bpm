@@ -1,1 +1,0 @@
-start cmd /k java -jar ..\..\..\workers\saveDataWorker\target\saveDataWorker.jar
